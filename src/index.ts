@@ -11,11 +11,15 @@ const bot = new Bot(tgBotToken!);
 bot.command("start", (ctx) => ctx.reply("Напишите в сообщении город, чтобы получить погоду."))
 
 bot.on("message", async (ctx) => {
+    const startKeyboard = new Keyboard()
+        .text('Погода сегодня 🌞').text('Погода завтра 🌅').row()
+        .text('Прогноз на 3 дня 📊').text('Прогноз на 7 дней 🔮')
+
     const city: string | undefined = ctx.message.text;
     try {
         const response = await axios.get(`${host}/current.json?key=${weatherApiKey}&q=${city}&lang=ru`);
         const temperatureText: string = response.data.current.temp_c < 0 ? `Температура: ${response.data.current.temp_c}°C🥶` : `Температура: ${response.data.current.temp_c}°C😊` ;
-        let conditionText: string = '123';
+        let conditionText: string = '';
         switch (response.data.current.condition.code) {
             case 1000:
                 conditionText = `На улице ${response.data.current.condition.text} ☀️`;
@@ -79,7 +83,7 @@ bot.on("message", async (ctx) => {
 
         const windText = `Скорость ветра: ${response.data.current.wind_mph} м/с💨`;
         const fullAnswer = `Погода в городе <b>${response.data.location.name}</b> 🌇\n${temperatureText} \n${conditionText} \n${windText}`;
-        await ctx.reply(fullAnswer, {parse_mode: "HTML"});
+        await ctx.reply(fullAnswer, {reply_markup: startKeyboard, parse_mode: "HTML"},);
     } catch (error) {
         console.log(error);
         await ctx.reply('Ошибка при попытке узнать погоду. Проверьте название города или попробуйте позже.')

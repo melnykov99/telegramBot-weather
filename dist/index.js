@@ -22,11 +22,14 @@ const host = 'https://api.weatherapi.com/v1';
 const bot = new grammy_1.Bot(tgBotToken);
 bot.command("start", (ctx) => ctx.reply("Напишите в сообщении город, чтобы получить погоду."));
 bot.on("message", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    const startKeyboard = new grammy_1.Keyboard()
+        .text('Погода сегодня 🌞').text('Погода завтра 🌅').row()
+        .text('Прогноз на 3 дня 📊').text('Прогноз на 7 дней 🔮');
     const city = ctx.message.text;
     try {
         const response = yield axios_1.default.get(`${host}/current.json?key=${weatherApiKey}&q=${city}&lang=ru`);
         const temperatureText = response.data.current.temp_c < 0 ? `Температура: ${response.data.current.temp_c}°C🥶` : `Температура: ${response.data.current.temp_c}°C😊`;
-        let conditionText = '123';
+        let conditionText = '';
         switch (response.data.current.condition.code) {
             case 1000:
                 conditionText = `На улице ${response.data.current.condition.text} ☀️`;
@@ -89,7 +92,7 @@ bot.on("message", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         }
         const windText = `Скорость ветра: ${response.data.current.wind_mph} м/с💨`;
         const fullAnswer = `Погода в городе <b>${response.data.location.name}</b> 🌇\n${temperatureText} \n${conditionText} \n${windText}`;
-        yield ctx.reply(fullAnswer, { parse_mode: "HTML" });
+        yield ctx.reply(fullAnswer, { reply_markup: startKeyboard, parse_mode: "HTML" });
     }
     catch (error) {
         console.log(error);
