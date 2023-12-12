@@ -12,9 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.currentWeather = void 0;
+exports.checkCity = exports.currentWeather = void 0;
 const axios_1 = __importDefault(require("axios"));
 const utils_1 = require("./utils");
+const constants_1 = require("./constants");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const weatherApiKey = process.env.WEATHER_API_KEY;
 const weather_host = 'https://api.weatherapi.com/v1';
 function currentWeather(city) {
@@ -28,9 +31,20 @@ function currentWeather(city) {
             return fullAnswer;
         }
         catch (error) {
-            console.log(error);
-            return 'Ошибка при попытке узнать погоду. Проверьте название города или попробуйте позже.';
+            return constants_1.API_RESULT.INCORRECT_CITY;
         }
     });
 }
 exports.currentWeather = currentWeather;
+function checkCity(city) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield axios_1.default.get(`${weather_host}/current.json?key=${weatherApiKey}&q=${city}&lang=ru`);
+            return response.data.location.name;
+        }
+        catch (error) {
+            return constants_1.API_RESULT.INCORRECT_CITY;
+        }
+    });
+}
+exports.checkCity = checkCity;
