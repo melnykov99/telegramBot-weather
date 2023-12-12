@@ -13,10 +13,12 @@
     "axios": "^1.6.2",
     "dotenv": "^16.3.1",
     "grammy": "^1.19.2",
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.2",
+    "pg": "^8.11.3"
   },
   "devDependencies": {
     "@types/node": "^20.10.4",
+    "@types/pg": "^8.10.9",
     "typescript": "^5.3.3"
   }
 }
