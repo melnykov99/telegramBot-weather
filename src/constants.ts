@@ -4,5 +4,5 @@ export enum DB_RESULT {
     'SUCCESSFULLY' = 'Operation completed successfully'
 }
 export enum API_RESULT {
-    'INCORRECT_CITY'= 'there is no such town.'
+    'UNKNOWN_ERROR'= 'Some error occurred during the request'
 }
