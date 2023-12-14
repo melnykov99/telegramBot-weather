@@ -43,10 +43,10 @@ exports.apiRequestClient = {
         });
     },
     // запрос погоды на определенное количество дней
-    forecastDays(city, day) {
+    forecastDays(city, days) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield axios_1.default.get(`${weather_host}/forecast.json?key=${weatherApiKey}&q=${city}&lang=ru&day=${day}`);
+                return yield axios_1.default.get(`${weather_host}/forecast.json?key=${weatherApiKey}&q=${city}&lang=ru&days=${days}`);
             }
             catch (error) {
                 return constants_1.API_RESULT.UNKNOWN_ERROR;

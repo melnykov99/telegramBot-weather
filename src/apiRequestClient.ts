@@ -25,9 +25,9 @@ export const apiRequestClient = {
         }
     },
     // запрос погоды на определенное количество дней
-    async forecastDays(city: string, day: number) {
+    async forecastDays(city: string, days: number) {
         try {
-            return await axios.get(`${weather_host}/forecast.json?key=${weatherApiKey}&q=${city}&lang=ru&day=${day}`)
+            return await axios.get(`${weather_host}/forecast.json?key=${weatherApiKey}&q=${city}&lang=ru&days=${days}`)
         } catch (error) {
             return API_RESULT.UNKNOWN_ERROR
         }
