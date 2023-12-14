@@ -1,8 +1,8 @@
-export function handlerConditionCode(code: number, text: string) {
+export function handlerConditionCode(code: number) {
     let conditionText: string = ''
     switch (code) {
         case 1000:
-            conditionText = `На улице ${text} ☀️`;
+            conditionText = '☀️';
             break;
         case 1003:
         case 1006:
@@ -10,7 +10,7 @@ export function handlerConditionCode(code: number, text: string) {
         case 1030:
         case 1135:
         case 1147:
-            conditionText = `На улице ${text} ☁️`;
+            conditionText = '☁️';
             break;
         case 1063:
         case 1072:
@@ -36,7 +36,7 @@ export function handlerConditionCode(code: number, text: string) {
         case 1264:
         case 1273:
         case 1276:
-            conditionText = `На улице ${text} 🌧`;
+            conditionText = '🌧';
             break;
         case 1066:
         case 1069:
@@ -55,15 +55,15 @@ export function handlerConditionCode(code: number, text: string) {
         case 1258:
         case 1279:
         case 1282:
-            conditionText = `На улице ${text} ❄️`;
+            conditionText = '❄️';
             break;
         default:
-            conditionText = `На улице ${text}!`;
+            conditionText = '';
     }
     return conditionText
 }
 
-export function handlerTemperature(temperature: number){
-    const temperatureText: string = temperature < 0 ? `Температура: ${temperature}°C🥶` : `Температура: ${temperature}°C😊`;
-    return temperatureText
+export function changeDateRuFormat(date: string) {
+    const dateSplit = date.split('-')
+    return `${dateSplit[2]}.${dateSplit[1]}.${dateSplit[0]}`
 }

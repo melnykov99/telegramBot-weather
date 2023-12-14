@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addUserInDB = exports.foundUserByChatId = void 0;
+exports.usersRepository = void 0;
 const pg_1 = require("pg");
 const dotenv_1 = __importDefault(require("dotenv"));
 const constants_1 = require("./constants");
@@ -24,33 +24,47 @@ const pool = new pg_1.Pool({
     password: process.env.DB_PASSWORD,
     port: Number(process.env.DB_PORT)
 });
-//TODO: any убрать
-function foundUserByChatId(chatId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const data = yield pool.query('SELECT * FROM main WHERE "chatId" = $1', [chatId]);
-            if (data.rowCount === 0) {
-                return constants_1.DB_RESULT.NOT_FOUND;
+exports.usersRepository = {
+    foundUserByChatId(chatId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const data = yield pool.query('SELECT * FROM main WHERE "chatId" = $1', [chatId]);
+                if (data.rowCount === 0) {
+                    return constants_1.DB_RESULT.NOT_FOUND;
+                }
+                return data.rows;
             }
-            return data.rows;
-        }
-        catch (error) {
-            console.log(error);
-            return constants_1.DB_RESULT.UNKNOWN_ERROR;
-        }
-    });
-}
-exports.foundUserByChatId = foundUserByChatId;
-function addUserInDB(chatId, city) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield pool.query('INSERT INTO main ("chatId", city) VALUES ($1, $2)', [chatId, city]);
-            return constants_1.DB_RESULT.SUCCESSFULLY;
-        }
-        catch (error) {
-            console.log(error);
-            return constants_1.DB_RESULT.UNKNOWN_ERROR;
-        }
-    });
-}
-exports.addUserInDB = addUserInDB;
+            catch (error) {
+                console.log(error);
+                return constants_1.DB_RESULT.UNKNOWN_ERROR;
+            }
+        });
+    },
+    foundCityByUserChatId(chatId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const data = yield pool.query('SELECT city FROM main WHERE "chatId" = $1', [chatId]);
+                if (data.rowCount === 0) {
+                    return constants_1.DB_RESULT.NOT_FOUND;
+                }
+                return data.rows[0].city;
+            }
+            catch (error) {
+                console.log(error);
+                return constants_1.DB_RESULT.UNKNOWN_ERROR;
+            }
+        });
+    },
+    addUser(chatId, city) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield pool.query('INSERT INTO main ("chatId", city) VALUES ($1, $2)', [chatId, city]);
+                return constants_1.DB_RESULT.SUCCESSFULLY;
+            }
+            catch (error) {
+                console.log(error);
+                return constants_1.DB_RESULT.UNKNOWN_ERROR;
+            }
+        });
+    }
+};

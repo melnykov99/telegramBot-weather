@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handlerTemperature = exports.handlerConditionCode = void 0;
-function handlerConditionCode(code, text) {
+exports.changeDateRuFormat = exports.handlerConditionCode = void 0;
+function handlerConditionCode(code) {
     let conditionText = '';
     switch (code) {
         case 1000:
-            conditionText = `На улице ${text} ☀️`;
+            conditionText = '☀️';
             break;
         case 1003:
         case 1006:
@@ -13,7 +13,7 @@ function handlerConditionCode(code, text) {
         case 1030:
         case 1135:
         case 1147:
-            conditionText = `На улице ${text} ☁️`;
+            conditionText = '☁️';
             break;
         case 1063:
         case 1072:
@@ -39,7 +39,7 @@ function handlerConditionCode(code, text) {
         case 1264:
         case 1273:
         case 1276:
-            conditionText = `На улице ${text} 🌧`;
+            conditionText = '🌧';
             break;
         case 1066:
         case 1069:
@@ -58,16 +58,16 @@ function handlerConditionCode(code, text) {
         case 1258:
         case 1279:
         case 1282:
-            conditionText = `На улице ${text} ❄️`;
+            conditionText = '❄️';
             break;
         default:
-            conditionText = `На улице ${text}!`;
+            conditionText = '';
     }
     return conditionText;
 }
 exports.handlerConditionCode = handlerConditionCode;
-function handlerTemperature(temperature) {
-    const temperatureText = temperature < 0 ? `Температура: ${temperature}°C🥶` : `Температура: ${temperature}°C😊`;
-    return temperatureText;
+function changeDateRuFormat(date) {
+    const dateSplit = date.split('-');
+    return `${dateSplit[2]}.${dateSplit[1]}.${dateSplit[0]}`;
 }
-exports.handlerTemperature = handlerTemperature;
+exports.changeDateRuFormat = changeDateRuFormat;

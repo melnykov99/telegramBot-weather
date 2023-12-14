@@ -9,5 +9,5 @@ var DB_RESULT;
 })(DB_RESULT || (exports.DB_RESULT = DB_RESULT = {}));
 var API_RESULT;
 (function (API_RESULT) {
-    API_RESULT["INCORRECT_CITY"] = "there is no such town.";
+    API_RESULT["UNKNOWN_ERROR"] = "Some error occurred during the request";
 })(API_RESULT || (exports.API_RESULT = API_RESULT = {}));
