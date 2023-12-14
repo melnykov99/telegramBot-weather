@@ -46,5 +46,14 @@ export const usersRepository = {
             return DB_RESULT.UNKNOWN_ERROR
         }
 
+    },
+    async updateCityByChatId(chatId: number, newCity: string) {
+        try {
+            await pool.query('UPDATE main SET city = $1 WHERE "chatId" = $2', [newCity, chatId])
+            return DB_RESULT.SUCCESSFULLY
+        } catch (error) {
+            console.log(error)
+            return DB_RESULT.UNKNOWN_ERROR
+        }
     }
 }

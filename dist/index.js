@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const grammy_1 = require("grammy");
+const conversations_1 = require("@grammyjs/conversations");
 const dotenv_1 = __importDefault(require("dotenv"));
 const apiRequestClient_1 = require("./apiRequestClient");
 const constants_1 = require("./constants");
@@ -22,39 +23,77 @@ const utils_1 = require("./utils");
 dotenv_1.default.config();
 const tgBotToken = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new grammy_1.Bot(tgBotToken);
+bot.use((0, grammy_1.session)({ initial: () => ({}) }));
+bot.use((0, conversations_1.conversations)());
+//клавиатура с кнопками, будем выводить при ответе
+const mainKeyboard = new grammy_1.Keyboard()
+    .text('Погода сегодня 🌞').text('Погода завтра 🌅').row()
+    .text('Прогноз на 3 дня 📊').text('Изменить город 🌇');
+//контекст
+function changeCity(conversation, ctx) {
+    var _a, _b;
+    return __awaiter(this, void 0, void 0, function* () {
+        yield ctx.reply('Пожалуйста, напиши название города в чат');
+        const newCityContext = yield conversation.wait();
+        const city = (_a = newCityContext.update.message) === null || _a === void 0 ? void 0 : _a.text;
+        if (!city) {
+            yield ctx.reply('Ошибка! Я умею определять только текст. <b>Ещё раз нажми кнопку</b> "Изменить город 🌇" и пришли название города.', {
+                parse_mode: "HTML",
+                reply_markup: mainKeyboard
+            });
+            return;
+        }
+        const checkedCity = yield apiRequestClient_1.apiRequestClient.checkCity(city);
+        if (checkedCity === constants_1.API_RESULT.UNKNOWN_ERROR) {
+            yield ctx.reply(`Ошибка! Я не смог найти такой город. Проверь название, затем<b>ещё раз нажми кнопку</b> "Изменить город 🌇".`, {
+                parse_mode: "HTML",
+                reply_markup: mainKeyboard
+            });
+            return;
+        }
+        const chatId = (_b = newCityContext.chat) === null || _b === void 0 ? void 0 : _b.id;
+        const updateResult = yield db_1.usersRepository.updateCityByChatId(chatId, checkedCity);
+        if (updateResult === constants_1.DB_RESULT.UNKNOWN_ERROR) {
+            yield ctx.reply('Ошибка при обновлении города! Попробуйте позже.');
+            return;
+        }
+        yield ctx.reply(`Принято ✅\nЗаписали <b>${checkedCity}</b> как твой новый город.`, {
+            parse_mode: "HTML",
+            reply_markup: mainKeyboard
+        });
+    });
+}
+bot.use((0, conversations_1.createConversation)(changeCity));
 //Реакция на команду /start. Просим пользователя написать свой город
 bot.command("start", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     yield ctx.reply("Напиши в сообщении свой <b>город</b>❗️  \nЯ буду ежедневно в 0️⃣6️⃣:3️⃣0️⃣ отправлять прогноз погоды. ", { parse_mode: "HTML" });
 }));
 bot.hears("Погода сегодня 🌞", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    //TODO: Поправить баг с датами. Нужно их сразу при использовании определять. Иначе слушатель один раз выполняет и затем дата не обновляется
     const date = (0, utils_1.togetherDate)();
     const answer = yield weatherService_1.weatherService.forecastByDate(ctx.chat.id, date);
-    yield ctx.reply(answer, { parse_mode: "HTML" });
+    yield ctx.reply(answer, { parse_mode: "HTML", reply_markup: mainKeyboard });
 }));
 bot.hears("Погода завтра 🌅", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     const date = (0, utils_1.tomorrowDate)();
     const answer = yield weatherService_1.weatherService.forecastByDate(ctx.chat.id, date);
-    yield ctx.reply(answer, { parse_mode: "HTML" });
+    yield ctx.reply(answer, { parse_mode: "HTML", reply_markup: mainKeyboard });
 }));
 bot.hears("Прогноз на 3 дня 📊", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     const answer = yield weatherService_1.weatherService.forecastThreeDays(ctx.chat.id);
-    yield ctx.reply(answer, { parse_mode: "HTML" });
+    yield ctx.reply(answer, { parse_mode: "HTML", reply_markup: mainKeyboard });
 }));
 bot.hears("Изменить город 🌇", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    yield ctx.reply('напиши город');
+    yield ctx.conversation.enter("changeCity");
 }));
 //Реакция на произвольное сообщение
 //Произвольное взаимодейтсвие с ботом должно быть только вначале, когда пользователь пишет свой город
 bot.on("message", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    //клавиатура с кнопками, будем выводить при ответе
-    const mainKeyboard = new grammy_1.Keyboard()
-        .text('Погода сегодня 🌞').text('Погода завтра 🌅').row()
-        .text('Прогноз на 3 дня 📊').text('Изменить город 🌇').resized();
     //Если в сообщении нет текста, то сообщаем об ошибке.
     const city = ctx.message.text;
     const chatId = ctx.chat.id;
     if (!city) {
-        yield ctx.reply('Ошибка! Я умею читать только названия городов. Пришли, пожалуйста, свой город.');
+        yield ctx.reply('Ошибка! Я умею определять только текст. Пожалуйста, напиши сообщение с названием своего города');
         return;
     }
     //Ищем пользователя в БД

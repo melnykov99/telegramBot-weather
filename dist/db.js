@@ -66,5 +66,17 @@ exports.usersRepository = {
                 return constants_1.DB_RESULT.UNKNOWN_ERROR;
             }
         });
+    },
+    updateCityByChatId(chatId, newCity) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield pool.query('UPDATE main SET city = $1 WHERE "chatId" = $2', [newCity, chatId]);
+                return constants_1.DB_RESULT.SUCCESSFULLY;
+            }
+            catch (error) {
+                console.log(error);
+                return constants_1.DB_RESULT.UNKNOWN_ERROR;
+            }
+        });
     }
 };
