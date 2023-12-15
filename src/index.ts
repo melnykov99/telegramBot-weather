@@ -5,7 +5,6 @@ import {apiRequestClient} from "./apiRequestClient";
 import {API_RESULT, DB_RESULT} from "./constants";
 import {usersRepository} from "./db";
 import {weatherService} from "./weatherService";
-import {togetherDate, tomorrowDate} from "./utils";
 
 type WeatherContext = Context & ConversationFlavor;
 type WeatherConversation = Conversation<WeatherContext>;
@@ -21,7 +20,8 @@ bot.use(conversations());
 //клавиатура с кнопками, будем выводить при ответе
 const mainKeyboard = new Keyboard()
     .text('Погода сегодня 🌞').text('Погода завтра 🌅').row()
-    .text('Прогноз на 3 дня 📊').text('Изменить город 🌇');
+    .text('Прогноз на 3 дня 📊').text('Прогноз на 5 дней 🔮').row()
+    .text('Изменить город 🌇');
 
 //контекст
 async function changeCity(conversation: WeatherConversation, ctx: WeatherContext) {
@@ -62,18 +62,23 @@ bot.command("start", async (ctx) => {
     await ctx.reply("Напиши в сообщении свой <b>город</b>❗️  \nЯ буду ежедневно в 0️⃣6️⃣:3️⃣0️⃣ отправлять прогноз погоды. ", {parse_mode: "HTML"})
 })
 bot.hears("Погода сегодня 🌞", async (ctx) => {
-    //TODO: Поправить баг с датами. Нужно их сразу при использовании определять. Иначе слушатель один раз выполняет и затем дата не обновляется
-    const date = togetherDate()
-    const answer: string = await weatherService.forecastByDate(ctx.chat.id, date)
+    const togetherDate = new Date().toISOString().split('T')[0]
+    const answer: string = await weatherService.forecastByDate(ctx.chat.id, togetherDate)
     await ctx.reply(answer, {parse_mode: "HTML", reply_markup: mainKeyboard})
 })
 bot.hears("Погода завтра 🌅", async (ctx) => {
-    const date = tomorrowDate()
-    const answer: string = await weatherService.forecastByDate(ctx.chat.id, date)
+    const currentDate = new Date();
+    const tomorrowDate = currentDate.setDate(currentDate.getDate() + 1);
+    const tomorrowDateISO = currentDate.toISOString();
+    const answer: string = await weatherService.forecastByDate(ctx.chat.id, tomorrowDateISO.split('T')[0])
     await ctx.reply(answer, {parse_mode: "HTML", reply_markup: mainKeyboard})
 })
 bot.hears("Прогноз на 3 дня 📊", async (ctx) => {
     const answer = await weatherService.forecastThreeDays(ctx.chat.id)
+    await ctx.reply(answer, {parse_mode: "HTML", reply_markup: mainKeyboard})
+})
+bot.hears('Прогноз на 5 дней 🔮', async (ctx) => {
+    const answer = await weatherService.forecastFiveDays(ctx.chat.id)
     await ctx.reply(answer, {parse_mode: "HTML", reply_markup: mainKeyboard})
 })
 bot.hears("Изменить город 🌇", async (ctx) => {

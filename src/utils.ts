@@ -67,9 +67,6 @@ export function changeDateRuFormat(date: string) {
     const dateSplit = date.split('-')
     return `${dateSplit[2]}.${dateSplit[1]}.${dateSplit[0]}`
 }
-export function togetherDate() {
-    return new Date().toISOString().split('T')[0]
-}
 export function tomorrowDate() {
     const currentDate = new Date();
     const tomorrowDate = currentDate.setDate(currentDate.getDate() + 1);

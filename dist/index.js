@@ -19,7 +19,6 @@ const apiRequestClient_1 = require("./apiRequestClient");
 const constants_1 = require("./constants");
 const db_1 = require("./db");
 const weatherService_1 = require("./weatherService");
-const utils_1 = require("./utils");
 dotenv_1.default.config();
 const tgBotToken = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new grammy_1.Bot(tgBotToken);
@@ -28,7 +27,8 @@ bot.use((0, conversations_1.conversations)());
 //клавиатура с кнопками, будем выводить при ответе
 const mainKeyboard = new grammy_1.Keyboard()
     .text('Погода сегодня 🌞').text('Погода завтра 🌅').row()
-    .text('Прогноз на 3 дня 📊').text('Изменить город 🌇');
+    .text('Прогноз на 3 дня 📊').text('Прогноз на 5 дней 🔮').row()
+    .text('Изменить город 🌇');
 //контекст
 function changeCity(conversation, ctx) {
     var _a, _b;
@@ -69,18 +69,23 @@ bot.command("start", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     yield ctx.reply("Напиши в сообщении свой <b>город</b>❗️  \nЯ буду ежедневно в 0️⃣6️⃣:3️⃣0️⃣ отправлять прогноз погоды. ", { parse_mode: "HTML" });
 }));
 bot.hears("Погода сегодня 🌞", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    //TODO: Поправить баг с датами. Нужно их сразу при использовании определять. Иначе слушатель один раз выполняет и затем дата не обновляется
-    const date = (0, utils_1.togetherDate)();
-    const answer = yield weatherService_1.weatherService.forecastByDate(ctx.chat.id, date);
+    const togetherDate = new Date().toISOString().split('T')[0];
+    const answer = yield weatherService_1.weatherService.forecastByDate(ctx.chat.id, togetherDate);
     yield ctx.reply(answer, { parse_mode: "HTML", reply_markup: mainKeyboard });
 }));
 bot.hears("Погода завтра 🌅", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    const date = (0, utils_1.tomorrowDate)();
-    const answer = yield weatherService_1.weatherService.forecastByDate(ctx.chat.id, date);
+    const currentDate = new Date();
+    const tomorrowDate = currentDate.setDate(currentDate.getDate() + 1);
+    const tomorrowDateISO = currentDate.toISOString();
+    const answer = yield weatherService_1.weatherService.forecastByDate(ctx.chat.id, tomorrowDateISO.split('T')[0]);
     yield ctx.reply(answer, { parse_mode: "HTML", reply_markup: mainKeyboard });
 }));
 bot.hears("Прогноз на 3 дня 📊", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     const answer = yield weatherService_1.weatherService.forecastThreeDays(ctx.chat.id);
+    yield ctx.reply(answer, { parse_mode: "HTML", reply_markup: mainKeyboard });
+}));
+bot.hears('Прогноз на 5 дней 🔮', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    const answer = yield weatherService_1.weatherService.forecastFiveDays(ctx.chat.id);
     yield ctx.reply(answer, { parse_mode: "HTML", reply_markup: mainKeyboard });
 }));
 bot.hears("Изменить город 🌇", (ctx) => __awaiter(void 0, void 0, void 0, function* () {

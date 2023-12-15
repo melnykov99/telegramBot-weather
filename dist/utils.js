@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.tomorrowDate = exports.togetherDate = exports.changeDateRuFormat = exports.handlerConditionCode = void 0;
+exports.tomorrowDate = exports.changeDateRuFormat = exports.handlerConditionCode = void 0;
 function handlerConditionCode(code) {
     let conditionText = '';
     switch (code) {
@@ -71,10 +71,6 @@ function changeDateRuFormat(date) {
     return `${dateSplit[2]}.${dateSplit[1]}.${dateSplit[0]}`;
 }
 exports.changeDateRuFormat = changeDateRuFormat;
-function togetherDate() {
-    return new Date().toISOString().split('T')[0];
-}
-exports.togetherDate = togetherDate;
 function tomorrowDate() {
     const currentDate = new Date();
     const tomorrowDate = currentDate.setDate(currentDate.getDate() + 1);
