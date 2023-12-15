@@ -25,7 +25,7 @@ const mainKeyboard = new Keyboard()
     .text('Изменить город 🌇');
 
 //крона. из БД достаем всех юзеров. Отправляем всем сообщение с их погодой.
-cron.schedule('00 6 * * *', async () => {
+cron.schedule('30 7 * * *', async () => {
     const data = await usersRepository.getAllUsers()
     if (data === DB_RESULT.UNKNOWN_ERROR) {
         return
@@ -41,7 +41,7 @@ cron.schedule('00 6 * * *', async () => {
         const answer: string = await weatherService.forecastByDate(chatId, togetherDate)
         await bot.api.sendMessage(usersData[i].chatId, answer, {parse_mode: "HTML", reply_markup: mainKeyboard})
     }
-})
+}, {timezone: 'Europe/Moscow'})
 
 //контекст
 async function changeCity(conversation: WeatherConversation, ctx: WeatherContext) {
@@ -79,7 +79,7 @@ bot.use(createConversation(changeCity));
 
 //Реакция на команду /start. Просим пользователя написать свой город
 bot.command("start", async (ctx) => {
-    await ctx.reply("Напиши в сообщении свой <b>город</b>❗️  \nЯ буду ежедневно в 0️⃣6️⃣:0️⃣0️⃣ отправлять прогноз погоды. ", {parse_mode: "HTML"})
+    await ctx.reply("Напиши в сообщении свой <b>город</b>❗️  \nЯ буду ежедневно в 0️⃣7️⃣:3️⃣0️⃣ отправлять прогноз погоды. ", {parse_mode: "HTML"})
 })
 bot.hears("Погода сегодня 🌞", async (ctx) => {
     const togetherDate = new Date().toISOString().split('T')[0]
