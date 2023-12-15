@@ -5,6 +5,7 @@ import {apiRequestClient} from "./apiRequestClient";
 import {API_RESULT, DB_RESULT} from "./constants";
 import {usersRepository} from "./db";
 import {weatherService} from "./weatherService";
+import cron from 'node-cron'
 
 type WeatherContext = Context & ConversationFlavor;
 type WeatherConversation = Conversation<WeatherContext>;
@@ -22,6 +23,25 @@ const mainKeyboard = new Keyboard()
     .text('Погода сегодня 🌞').text('Погода завтра 🌅').row()
     .text('Прогноз на 3 дня 📊').text('Прогноз на 5 дней 🔮').row()
     .text('Изменить город 🌇');
+
+//крона. из БД достаем всех юзеров. Отправляем всем сообщение с их погодой.
+cron.schedule('00 6 * * *', async () => {
+    const data = await usersRepository.getAllUsers()
+    if (data === DB_RESULT.UNKNOWN_ERROR) {
+        return
+    }
+    const usersCount = data.rowCount
+    const usersData = data.rows
+    const togetherDate = new Date().toISOString().split('T')[0]
+    if(!usersCount) {
+        return
+    }
+    for (let i = 0; i < usersCount; i++) {
+        const chatId = usersData[i].chatId
+        const answer: string = await weatherService.forecastByDate(chatId, togetherDate)
+        await bot.api.sendMessage(usersData[i].chatId, answer, {parse_mode: "HTML", reply_markup: mainKeyboard})
+    }
+})
 
 //контекст
 async function changeCity(conversation: WeatherConversation, ctx: WeatherContext) {
@@ -59,7 +79,7 @@ bot.use(createConversation(changeCity));
 
 //Реакция на команду /start. Просим пользователя написать свой город
 bot.command("start", async (ctx) => {
-    await ctx.reply("Напиши в сообщении свой <b>город</b>❗️  \nЯ буду ежедневно в 0️⃣6️⃣:3️⃣0️⃣ отправлять прогноз погоды. ", {parse_mode: "HTML"})
+    await ctx.reply("Напиши в сообщении свой <b>город</b>❗️  \nЯ буду ежедневно в 0️⃣6️⃣:0️⃣0️⃣ отправлять прогноз погоды. ", {parse_mode: "HTML"})
 })
 bot.hears("Погода сегодня 🌞", async (ctx) => {
     const togetherDate = new Date().toISOString().split('T')[0]

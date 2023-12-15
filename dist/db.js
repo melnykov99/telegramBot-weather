@@ -78,5 +78,16 @@ exports.usersRepository = {
                 return constants_1.DB_RESULT.UNKNOWN_ERROR;
             }
         });
+    },
+    getAllUsers() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield pool.query('SELECT "chatId" FROM main');
+            }
+            catch (error) {
+                console.log(error);
+                return constants_1.DB_RESULT.UNKNOWN_ERROR;
+            }
+        });
     }
 };

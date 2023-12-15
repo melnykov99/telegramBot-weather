@@ -55,5 +55,13 @@ export const usersRepository = {
             console.log(error)
             return DB_RESULT.UNKNOWN_ERROR
         }
+    },
+    async getAllUsers() {
+        try {
+            return await pool.query('SELECT "chatId" FROM main')
+        } catch (error) {
+            console.log(error)
+            return DB_RESULT.UNKNOWN_ERROR
+        }
     }
 }

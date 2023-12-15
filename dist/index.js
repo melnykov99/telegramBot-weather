@@ -19,6 +19,7 @@ const apiRequestClient_1 = require("./apiRequestClient");
 const constants_1 = require("./constants");
 const db_1 = require("./db");
 const weatherService_1 = require("./weatherService");
+const node_cron_1 = __importDefault(require("node-cron"));
 dotenv_1.default.config();
 const tgBotToken = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new grammy_1.Bot(tgBotToken);
@@ -29,6 +30,24 @@ const mainKeyboard = new grammy_1.Keyboard()
     .text('Погода сегодня 🌞').text('Погода завтра 🌅').row()
     .text('Прогноз на 3 дня 📊').text('Прогноз на 5 дней 🔮').row()
     .text('Изменить город 🌇');
+//крона. из БД достаем всех юзеров. Отправляем всем сообщение с их погодой.
+node_cron_1.default.schedule('00 6 * * *', () => __awaiter(void 0, void 0, void 0, function* () {
+    const data = yield db_1.usersRepository.getAllUsers();
+    if (data === constants_1.DB_RESULT.UNKNOWN_ERROR) {
+        return;
+    }
+    const usersCount = data.rowCount;
+    const usersData = data.rows;
+    const togetherDate = new Date().toISOString().split('T')[0];
+    if (!usersCount) {
+        return;
+    }
+    for (let i = 0; i < usersCount; i++) {
+        const chatId = usersData[i].chatId;
+        const answer = yield weatherService_1.weatherService.forecastByDate(chatId, togetherDate);
+        yield bot.api.sendMessage(usersData[i].chatId, answer, { parse_mode: "HTML", reply_markup: mainKeyboard });
+    }
+}));
 //контекст
 function changeCity(conversation, ctx) {
     var _a, _b;
@@ -66,7 +85,7 @@ function changeCity(conversation, ctx) {
 bot.use((0, conversations_1.createConversation)(changeCity));
 //Реакция на команду /start. Просим пользователя написать свой город
 bot.command("start", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    yield ctx.reply("Напиши в сообщении свой <b>город</b>❗️  \nЯ буду ежедневно в 0️⃣6️⃣:3️⃣0️⃣ отправлять прогноз погоды. ", { parse_mode: "HTML" });
+    yield ctx.reply("Напиши в сообщении свой <b>город</b>❗️  \nЯ буду ежедневно в 0️⃣6️⃣:0️⃣0️⃣ отправлять прогноз погоды. ", { parse_mode: "HTML" });
 }));
 bot.hears("Погода сегодня 🌞", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     const togetherDate = new Date().toISOString().split('T')[0];
