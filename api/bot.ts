@@ -1,4 +1,4 @@
-import {Bot, Context, Keyboard, session} from "grammy";
+import {Bot, Context, Keyboard, session, webhookCallback} from "grammy";
 import {type Conversation, type ConversationFlavor, conversations, createConversation,} from "@grammyjs/conversations";
 import dotenv from 'dotenv';
 import {apiRequestClient} from "./apiRequestClient";
@@ -136,5 +136,6 @@ bot.on("message", async (ctx) => {
     return
 });
 
+export default webhookCallback(bot, "http");
 
 bot.start();
