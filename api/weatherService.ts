@@ -16,8 +16,8 @@ export const weatherService = {
         if (response === API_RESULT.UNKNOWN_ERROR) {
             return 'Ошибка при запросе погоды! Попробуйте позже.'
         }
-        const maxTemp = response.data.forecast.forecastday[0].day.maxtemp_c
-        const minTemp = response.data.forecast.forecastday[0].day.mintemp_c
+        const maxTemp = Math.round(response.data.forecast.forecastday[0].day.maxtemp_c)
+        const minTemp = Math.round(response.data.forecast.forecastday[0].day.mintemp_c)
         const avgWind = response.data.forecast.forecastday[0].day.avgvis_km
         const rainChance = response.data.forecast.forecastday[0].day.daily_chance_of_rain
         const snowChance = response.data.forecast.forecastday[0].day.daily_chance_of_snow
@@ -39,8 +39,8 @@ export const weatherService = {
             return 'Ошибка при запросе погоды! Попробуйте позже.'
         }
         const firstDayProp = {
-            maxTemp: response.data.forecast.forecastday[0].day.maxtemp_c,
-            minTemp: response.data.forecast.forecastday[0].day.mintemp_c,
+            maxTemp: Math.round(response.data.forecast.forecastday[0].day.maxtemp_c),
+            minTemp: Math.round(response.data.forecast.forecastday[0].day.mintemp_c),
             avgWind: response.data.forecast.forecastday[0].day.avgvis_km,
             rainChance: response.data.forecast.forecastday[0].day.daily_chance_of_rain,
             snowChance: response.data.forecast.forecastday[0].day.daily_chance_of_snow,
@@ -50,8 +50,8 @@ export const weatherService = {
         }
         const firstDayAnswer = `<b>${firstDayProp.dateRuFormat}</b>\nБольшую часть дня будет <b>${firstDayProp.avgCondition()}</b>\nТемпература: от <b>${firstDayProp.minTemp}℃</b> ⬇️ до <b>${firstDayProp.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${firstDayProp.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${firstDayProp.rainChance}%</b> 🌧\nВероятность снега: <b>${firstDayProp.snowChance}%</b> ❄️`
         const secondDayProp = {
-            maxTemp: response.data.forecast.forecastday[1].day.maxtemp_c,
-            minTemp: response.data.forecast.forecastday[1].day.mintemp_c,
+            maxTemp: Math.round(response.data.forecast.forecastday[1].day.maxtemp_c),
+            minTemp: Math.round(response.data.forecast.forecastday[1].day.mintemp_c),
             avgWind: response.data.forecast.forecastday[1].day.avgvis_km,
             rainChance: response.data.forecast.forecastday[1].day.daily_chance_of_rain,
             snowChance: response.data.forecast.forecastday[1].day.daily_chance_of_snow,
@@ -61,8 +61,8 @@ export const weatherService = {
         }
         const secondDayAnswer = `<b>${secondDayProp.dateRuFormat}</b>\nБольшую часть дня будет <b>${secondDayProp.avgCondition()}</b>\nТемпература: от <b>${secondDayProp.minTemp}℃</b> ⬇️ до <b>${secondDayProp.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${secondDayProp.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${secondDayProp.rainChance}%</b> 🌧\nВероятность снега: <b>${secondDayProp.snowChance}%</b> ❄️`
         const thirdDayProp = {
-            maxTemp: response.data.forecast.forecastday[2].day.maxtemp_c,
-            minTemp: response.data.forecast.forecastday[2].day.mintemp_c,
+            maxTemp: Math.round(response.data.forecast.forecastday[2].day.maxtemp_c),
+            minTemp: Math.round(response.data.forecast.forecastday[2].day.mintemp_c),
             avgWind: response.data.forecast.forecastday[2].day.avgvis_km,
             rainChance: response.data.forecast.forecastday[2].day.daily_chance_of_rain,
             snowChance: response.data.forecast.forecastday[2].day.daily_chance_of_snow,
@@ -86,8 +86,8 @@ export const weatherService = {
             return 'Ошибка при запросе погоды! Попробуйте позже.'
         }
         const firstDayProp = {
-            maxTemp: response.data.forecast.forecastday[0].day.maxtemp_c,
-            minTemp: response.data.forecast.forecastday[0].day.mintemp_c,
+            maxTemp: Math.round(response.data.forecast.forecastday[0].day.maxtemp_c),
+            minTemp: Math.round(response.data.forecast.forecastday[0].day.mintemp_c),
             avgWind: response.data.forecast.forecastday[0].day.avgvis_km,
             rainChance: response.data.forecast.forecastday[0].day.daily_chance_of_rain,
             snowChance: response.data.forecast.forecastday[0].day.daily_chance_of_snow,
@@ -97,8 +97,8 @@ export const weatherService = {
         }
         const firstDayAnswer = `<b>${firstDayProp.dateRuFormat}</b>\nБольшую часть дня будет <b>${firstDayProp.avgCondition()}</b>\nТемпература: от <b>${firstDayProp.minTemp}℃</b> ⬇️ до <b>${firstDayProp.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${firstDayProp.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${firstDayProp.rainChance}%</b> 🌧\nВероятность снега: <b>${firstDayProp.snowChance}%</b> ❄️`
         const secondDayProp = {
-            maxTemp: response.data.forecast.forecastday[1].day.maxtemp_c,
-            minTemp: response.data.forecast.forecastday[1].day.mintemp_c,
+            maxTemp: Math.round(response.data.forecast.forecastday[1].day.maxtemp_c),
+            minTemp: Math.round(response.data.forecast.forecastday[1].day.mintemp_c),
             avgWind: response.data.forecast.forecastday[1].day.avgvis_km,
             rainChance: response.data.forecast.forecastday[1].day.daily_chance_of_rain,
             snowChance: response.data.forecast.forecastday[1].day.daily_chance_of_snow,
@@ -108,8 +108,8 @@ export const weatherService = {
         }
         const secondDayAnswer = `<b>${secondDayProp.dateRuFormat}</b>\nБольшую часть дня будет <b>${secondDayProp.avgCondition()}</b>\nТемпература: от <b>${secondDayProp.minTemp}℃</b> ⬇️ до <b>${secondDayProp.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${secondDayProp.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${secondDayProp.rainChance}%</b> 🌧\nВероятность снега: <b>${secondDayProp.snowChance}%</b> ❄️`
         const thirdDayProp = {
-            maxTemp: response.data.forecast.forecastday[2].day.maxtemp_c,
-            minTemp: response.data.forecast.forecastday[2].day.mintemp_c,
+            maxTemp: Math.round(response.data.forecast.forecastday[2].day.maxtemp_c),
+            minTemp: Math.round(response.data.forecast.forecastday[2].day.mintemp_c),
             avgWind: response.data.forecast.forecastday[2].day.avgvis_km,
             rainChance: response.data.forecast.forecastday[2].day.daily_chance_of_rain,
             snowChance: response.data.forecast.forecastday[2].day.daily_chance_of_snow,
@@ -132,8 +132,8 @@ export const weatherService = {
             return 'Ошибка при запросе погоды! Попробуйте позже.'
         }
         const fourthDayProp = {
-            maxTemp: responseFourthDay.data.forecast.forecastday[0].day.maxtemp_c,
-            minTemp: responseFourthDay.data.forecast.forecastday[0].day.mintemp_c,
+            maxTemp: Math.round(responseFourthDay.data.forecast.forecastday[0].day.maxtemp_c),
+            minTemp: Math.round(responseFourthDay.data.forecast.forecastday[0].day.mintemp_c),
             avgWind: responseFourthDay.data.forecast.forecastday[0].day.avgvis_km,
             rainChance: responseFourthDay.data.forecast.forecastday[0].day.daily_chance_of_rain,
             snowChance: responseFourthDay.data.forecast.forecastday[0].day.daily_chance_of_snow,
@@ -148,8 +148,8 @@ export const weatherService = {
             return 'Ошибка при запросе погоды! Попробуйте позже.'
         }
         const fifthDayProp = {
-            maxTemp: responseFifthDay.data.forecast.forecastday[0].day.maxtemp_c,
-            minTemp: responseFifthDay.data.forecast.forecastday[0].day.mintemp_c,
+            maxTemp: Math.round(responseFifthDay.data.forecast.forecastday[0].day.maxtemp_c),
+            minTemp: Math.round(responseFifthDay.data.forecast.forecastday[0].day.mintemp_c),
             avgWind: responseFifthDay.data.forecast.forecastday[0].day.avgvis_km,
             rainChance: responseFifthDay.data.forecast.forecastday[0].day.daily_chance_of_rain,
             snowChance: responseFifthDay.data.forecast.forecastday[0].day.daily_chance_of_snow,
