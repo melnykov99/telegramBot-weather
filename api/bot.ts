@@ -137,5 +137,3 @@ bot.on("message", async (ctx) => {
 });
 
 export default webhookCallback(bot, "http");
-
-bot.start();
