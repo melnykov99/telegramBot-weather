@@ -10,7 +10,6 @@ const apiRequestClient_1 = require("./apiRequestClient");
 const constants_1 = require("./constants");
 const db_1 = require("./db");
 const weatherService_1 = require("./weatherService");
-const node_cron_1 = __importDefault(require("node-cron"));
 dotenv_1.default.config();
 const tgBotToken = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new grammy_1.Bot(tgBotToken);
@@ -22,23 +21,33 @@ const mainKeyboard = new grammy_1.Keyboard()
     .text('Прогноз на 3 дня 📊').text('Прогноз на 5 дней 🔮').row()
     .text('Изменить город 🌇');
 //крона. из БД достаем всех юзеров. Отправляем всем сообщение с их погодой.
-node_cron_1.default.schedule('00 6 * * *', async () => {
-    const data = await db_1.usersRepository.getAllUsers();
-    if (data === constants_1.DB_RESULT.UNKNOWN_ERROR) {
-        return;
+/*cron.schedule('31 10 * * *', async () => {
+    const data = await usersRepository.getAllUsers()
+    console.log('Начало кроны')
+    if (data === DB_RESULT.UNKNOWN_ERROR) {
+        console.log('ошибка бд')
+        return
     }
-    const usersCount = data.rowCount;
-    const usersData = data.rows;
-    const togetherDate = new Date().toISOString().split('T')[0];
-    if (!usersCount) {
-        return;
+    const usersCount = data.rowCount
+    console.log(usersCount)
+    const usersData = data.rows
+    const togetherDate = new Date().toISOString().split('T')[0]
+    if(!usersCount) {
+        console.log('ошибка, нет пользователей')
+        return
     }
+    console.log('крона. Лог перед циклом')
     for (let i = 0; i < usersCount; i++) {
-        const chatId = usersData[i].chatId;
-        const answer = await weatherService_1.weatherService.forecastByDate(chatId, togetherDate);
-        await bot.api.sendMessage(usersData[i].chatId, answer, { parse_mode: "HTML", reply_markup: mainKeyboard });
+        const chatId = usersData[i].chatId
+        console.log('крона в цикле')
+        console.log(usersData[i])
+        const answer: string = await weatherService.forecastByDate(chatId, togetherDate)
+        console.log(answer)
+        await bot.api.sendMessage(usersData[i].chatId, answer, {parse_mode: "HTML", reply_markup: mainKeyboard})
+        console.log('крона в конце цикла после отправки сообщения')
     }
-});
+}, {timezone: 'Europe/Moscow'})
+*/
 //контекст
 async function changeCity(conversation, ctx) {
     var _a, _b;
@@ -74,7 +83,7 @@ async function changeCity(conversation, ctx) {
 bot.use((0, conversations_1.createConversation)(changeCity));
 //Реакция на команду /start. Просим пользователя написать свой город
 bot.command("start", async (ctx) => {
-    await ctx.reply("Напиши в сообщении свой <b>город</b>❗️  \nЯ буду ежедневно в 0️⃣6️⃣:0️⃣0️⃣ отправлять прогноз погоды. ", { parse_mode: "HTML" });
+    await ctx.reply("Напиши в сообщении свой <b>город</b>❗️  \nЯ буду ежедневно в 0️⃣7️⃣:3️⃣0️⃣ отправлять прогноз погоды. ", { parse_mode: "HTML" });
 });
 bot.hears("Погода сегодня 🌞", async (ctx) => {
     const togetherDate = new Date().toISOString().split('T')[0];
@@ -129,4 +138,3 @@ bot.on("message", async (ctx) => {
     return;
 });
 exports.default = (0, grammy_1.webhookCallback)(bot, "http");
-bot.start();

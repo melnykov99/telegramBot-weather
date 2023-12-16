@@ -24,8 +24,10 @@ const mainKeyboard = new Keyboard()
     .text('Прогноз на 3 дня 📊').text('Прогноз на 5 дней 🔮').row()
     .text('Изменить город 🌇');
 
+
+
 //крона. из БД достаем всех юзеров. Отправляем всем сообщение с их погодой.
-cron.schedule('31 10 * * *', async () => {
+/*cron.schedule('31 10 * * *', async () => {
     const data = await usersRepository.getAllUsers()
     console.log('Начало кроны')
     if (data === DB_RESULT.UNKNOWN_ERROR) {
@@ -51,7 +53,7 @@ cron.schedule('31 10 * * *', async () => {
         console.log('крона в конце цикла после отправки сообщения')
     }
 }, {timezone: 'Europe/Moscow'})
-
+*/
 //контекст
 async function changeCity(conversation: WeatherConversation, ctx: WeatherContext) {
     await ctx.reply('Пожалуйста, напиши название города в чат')
