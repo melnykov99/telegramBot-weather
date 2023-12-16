@@ -13,7 +13,7 @@ type WeatherConversation = Conversation<WeatherContext>;
 dotenv.config();
 
 const tgBotToken: string | undefined = process.env.TELEGRAM_BOT_TOKEN;
-const bot = new Bot<WeatherContext>(tgBotToken!);
+export const bot = new Bot<WeatherContext>(tgBotToken!);
 
 bot.use(session({initial: () => ({})}));
 bot.use(conversations());
@@ -27,7 +27,8 @@ const mainKeyboard = new Keyboard()
 
 
 //крона. из БД достаем всех юзеров. Отправляем всем сообщение с их погодой.
-/*cron.schedule('31 10 * * *', async () => {
+/*
+cron.schedule('31 10 * * *', async () => {
     const data = await usersRepository.getAllUsers()
     console.log('Начало кроны')
     if (data === DB_RESULT.UNKNOWN_ERROR) {
