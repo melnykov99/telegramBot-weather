@@ -23,8 +23,11 @@ async function forecastEverydayCron() {
 }
 
 async function testCron() {
-    const data = await usersRepository.foundCityByUserChatId(283517479)
+    const data = await usersRepository.testFound(283517479)
     if (data === DB_RESULT.UNKNOWN_ERROR) {
+        return
+    }
+    if (data === DB_RESULT.NOT_FOUND) {
         return
     }
     const usersCount = data.rowCount

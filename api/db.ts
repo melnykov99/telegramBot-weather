@@ -63,5 +63,17 @@ export const usersRepository = {
             console.log(error)
             return DB_RESULT.UNKNOWN_ERROR
         }
+    },
+    async testFound(chatId: number) {
+        try {
+            const data = await pool.query('SELECT * FROM main WHERE "chatId" = $1', [chatId])
+            if (data.rowCount === 0) {
+                return DB_RESULT.NOT_FOUND
+            }
+            return data
+        } catch (error) {
+            console.log(error)
+            return DB_RESULT.UNKNOWN_ERROR
+        }
     }
 }
