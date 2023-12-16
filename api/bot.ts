@@ -5,7 +5,6 @@ import {apiRequestClient} from "./apiRequestClient";
 import {API_RESULT, DB_RESULT} from "./constants";
 import {usersRepository} from "./db";
 import {weatherService} from "./weatherService";
-import cron from 'node-cron'
 
 type WeatherContext = Context & ConversationFlavor;
 type WeatherConversation = Conversation<WeatherContext>;
@@ -19,42 +18,11 @@ bot.use(session({initial: () => ({})}));
 bot.use(conversations());
 
 //клавиатура с кнопками, будем выводить при ответе
-const mainKeyboard = new Keyboard()
+export const mainKeyboard = new Keyboard()
     .text('Погода сегодня 🌞').text('Погода завтра 🌅').row()
     .text('Прогноз на 3 дня 📊').text('Прогноз на 5 дней 🔮').row()
     .text('Изменить город 🌇');
 
-
-
-//крона. из БД достаем всех юзеров. Отправляем всем сообщение с их погодой.
-/*
-cron.schedule('31 10 * * *', async () => {
-    const data = await usersRepository.getAllUsers()
-    console.log('Начало кроны')
-    if (data === DB_RESULT.UNKNOWN_ERROR) {
-        console.log('ошибка бд')
-        return
-    }
-    const usersCount = data.rowCount
-    console.log(usersCount)
-    const usersData = data.rows
-    const togetherDate = new Date().toISOString().split('T')[0]
-    if(!usersCount) {
-        console.log('ошибка, нет пользователей')
-        return
-    }
-    console.log('крона. Лог перед циклом')
-    for (let i = 0; i < usersCount; i++) {
-        const chatId = usersData[i].chatId
-        console.log('крона в цикле')
-        console.log(usersData[i])
-        const answer: string = await weatherService.forecastByDate(chatId, togetherDate)
-        console.log(answer)
-        await bot.api.sendMessage(usersData[i].chatId, answer, {parse_mode: "HTML", reply_markup: mainKeyboard})
-        console.log('крона в конце цикла после отправки сообщения')
-    }
-}, {timezone: 'Europe/Moscow'})
-*/
 //контекст
 async function changeCity(conversation: WeatherConversation, ctx: WeatherContext) {
     await ctx.reply('Пожалуйста, напиши название города в чат')
