@@ -3,7 +3,7 @@ import {type Conversation, type ConversationFlavor, conversations, createConvers
 import dotenv from 'dotenv';
 import {apiRequestClient} from "./apiRequestClient";
 import {API_RESULT, DB_RESULT} from "./constants";
-import {usersRepository} from "./db";
+import {usersRepository} from "./usersRepository";
 import {weatherService} from "./weatherService";
 
 type WeatherContext = Context & ConversationFlavor;

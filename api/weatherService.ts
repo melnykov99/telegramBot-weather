@@ -1,7 +1,7 @@
 import {apiRequestClient} from "./apiRequestClient";
 import {changeDateRuFormat, handlerConditionCode} from "./utils";
 import {API_RESULT, DB_RESULT} from "./constants";
-import {usersRepository} from "./db";
+import {usersRepository} from "./usersRepository";
 
 export const weatherService = {
     async forecastByDate(chatId: number, date: string) {

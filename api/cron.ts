@@ -1,5 +1,5 @@
 import { NowRequest, NowResponse } from '@vercel/node';
-import { usersRepository } from "./db";
+import { usersRepository } from "./usersRepository";
 import { weatherService } from "./weatherService";
 import {bot, mainKeyboard} from "./bot";
 import {DB_RESULT} from "./constants";
