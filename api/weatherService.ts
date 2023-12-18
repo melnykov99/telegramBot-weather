@@ -138,7 +138,7 @@ export const weatherService = {
             rainChance: responseFourthDay.data.forecast.forecastday[0].day.daily_chance_of_rain,
             snowChance: responseFourthDay.data.forecast.forecastday[0].day.daily_chance_of_snow,
             conditionIcon: handlerConditionCode(responseFourthDay.data.forecast.forecastday[0].day.condition.code),
-            avgCondition: () => `${responseFourthDay.data.forecast.forecastday[0].day.condition.text.toLowerCase()} ${thirdDayProp.conditionIcon}`,
+            avgCondition: () => `${responseFourthDay.data.forecast.forecastday[0].day.condition.text.toLowerCase()} ${fourthDayProp.conditionIcon}`,
             dateRuFormat: changeDateRuFormat(responseFourthDay.data.forecast.forecastday[0].date)
         }
         const fourthDayAnswer = `<b>${fourthDayProp.dateRuFormat}</b>\nБольшую часть дня будет <b>${fourthDayProp.avgCondition()}</b>\nТемпература: от <b>${fourthDayProp.minTemp}℃</b> ⬇️ до <b>${fourthDayProp.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${fourthDayProp.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${fourthDayProp.rainChance}%</b> 🌧\nВероятность снега: <b>${fourthDayProp.snowChance}%</b> ❄️`
@@ -154,7 +154,7 @@ export const weatherService = {
             rainChance: responseFifthDay.data.forecast.forecastday[0].day.daily_chance_of_rain,
             snowChance: responseFifthDay.data.forecast.forecastday[0].day.daily_chance_of_snow,
             conditionIcon: handlerConditionCode(responseFifthDay.data.forecast.forecastday[0].day.condition.code),
-            avgCondition: () => `${responseFifthDay.data.forecast.forecastday[0].day.condition.text.toLowerCase()} ${thirdDayProp.conditionIcon}`,
+            avgCondition: () => `${responseFifthDay.data.forecast.forecastday[0].day.condition.text.toLowerCase()} ${fifthDayProp.conditionIcon}`,
             dateRuFormat: changeDateRuFormat(responseFifthDay.data.forecast.forecastday[0].date)
         }
         const fifthDayAnswer = `<b>${fifthDayProp.dateRuFormat}</b>\nБольшую часть дня будет <b>${fifthDayProp.avgCondition()}</b>\nТемпература: от <b>${fifthDayProp.minTemp}℃</b> ⬇️ до <b>${fifthDayProp.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${fifthDayProp.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${fifthDayProp.rainChance}%</b> 🌧\nВероятность снега: <b>${fifthDayProp.snowChance}%</b> ❄️`
