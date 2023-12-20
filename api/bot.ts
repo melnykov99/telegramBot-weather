@@ -111,14 +111,14 @@ bot.on("message", async (ctx) => {
     }
     //Search user's city in the database
     const checkUsersCity: DB_RESULT.UNKNOWN_ERROR | DB_RESULT.NOT_FOUND | string = await usersRepository.foundCityByUserChatId(chatId);
-    //If a user with a city is already in the database, he should not write. He needs to press the buttons on keyboard.
-    if (checkUsersCity) {
-        await ctx.reply(outputMessages.cityAlreadyExist(checkUsersCity), {reply_markup: mainKeyboard});
-        return;
-    }
     //Database error
     if (checkUsersCity === DB_RESULT.UNKNOWN_ERROR) {
         await ctx.reply(outputMessages.unknownError);
+        return;
+    }
+    //If a user with a city is already in the database, he should not write. He needs to press the buttons on keyboard.
+    if (checkUsersCity !== DB_RESULT.NOT_FOUND) {
+        await ctx.reply(outputMessages.cityAlreadyExist(checkUsersCity), {reply_markup: mainKeyboard});
         return;
     }
     //Check the city by sending a test request to the weather API.
