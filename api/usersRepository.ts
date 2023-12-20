@@ -13,18 +13,6 @@ const pool = new Pool({
 });
 
 export const usersRepository = {
-    async foundUserByChatId(chatId: number) {
-        try {
-            const data = await pool.query('SELECT * FROM main WHERE "chatId" = $1', [chatId])
-            if (data.rowCount === 0) {
-                return DB_RESULT.NOT_FOUND
-            }
-            return data.rows
-        } catch (error) {
-            console.log(error)
-            return DB_RESULT.UNKNOWN_ERROR
-        }
-    },
     async foundCityByUserChatId(chatId: number) {
         try {
             const data = await pool.query('SELECT city FROM main WHERE "chatId" = $1', [chatId])
