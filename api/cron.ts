@@ -18,7 +18,11 @@ async function forecastEverydayCron() {
     for (let i = 0; i < usersCount; i++) {
         const chatId = usersData[i].chatId
         const answer: string = await weatherService.forecastByDate(chatId, togetherDate)
-        await bot.api.sendMessage(usersData[i].chatId, answer, {parse_mode: "HTML", reply_markup: mainKeyboard})
+        try {
+            await bot.api.sendMessage(usersData[i].chatId, answer, {parse_mode: "HTML", reply_markup: mainKeyboard})
+        } catch (error) {
+            console.log(error)
+        }
     }
     console.log('crone successfully completed')
 }
