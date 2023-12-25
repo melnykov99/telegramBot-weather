@@ -4,30 +4,32 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const weatherApiKey = process.env.WEATHER_API_KEY;
-const weather_host = 'https://api.weatherapi.com/v1';
 
+const weatherApiKey: string | undefined = process.env.WEATHER_API_KEY;
+const weatherHost: string = "https://api.weatherapi.com/v1";
+
+//Methods for requesting weather via api.weatherapi.com
 export const apiRequestClient = {
-    // запрос погоды по дате
+    //Request forecast by date in format yyyy-mm-dd
     async forecastDate(city: string, date: string) {
         try {
-            return await axios.get(`${weather_host}/forecast.json?key=${weatherApiKey}&q=${city}&lang=ru&date=${date}`)
+            return await axios.get(`${weatherHost}/forecast.json?key=${weatherApiKey}&q=${city}&lang=ru&date=${date}`)
         } catch (error) {
             return API_RESULT.UNKNOWN_ERROR
         }
     },
-    // запрос погоды на определенное количество дней
+    //Request weather for several days. Free API plan is limited, maximum 3 days
     async forecastDays(city: string, days: number) {
         try {
-            return await axios.get(`${weather_host}/forecast.json?key=${weatherApiKey}&q=${city}&lang=ru&days=${days}`)
+            return await axios.get(`${weatherHost}/forecast.json?key=${weatherApiKey}&q=${city}&lang=ru&days=${days}`)
         } catch (error) {
             return API_RESULT.UNKNOWN_ERROR
         }
     },
-    // тестовый запрос текущей погоды. Выполняется чтобы определить существующий ли город ввел пользователью
+    //Test request which use for validation city. If city exists return city name, else return error
     async checkCity(city: string) {
         try {
-            const response = await axios.get(`${weather_host}/current.json?key=${weatherApiKey}&q=${city}&lang=ru`);
+            const response = await axios.get(`${weatherHost}/current.json?key=${weatherApiKey}&q=${city}&lang=ru`);
             return response.data.location.name
         } catch (error) {
             return API_RESULT.UNKNOWN_ERROR
