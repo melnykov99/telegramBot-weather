@@ -1,9 +1,10 @@
 import {Pool} from "pg";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 import {DB_RESULT} from "./constants";
 
 dotenv.config();
 
+//Database connection information
 const pool = new Pool({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
@@ -12,56 +13,44 @@ const pool = new Pool({
     port: Number(process.env.DB_PORT)
 });
 
+//Methods for works with DB
 export const usersRepository = {
     async foundCityByUserChatId(chatId: number) {
         try {
-            const data = await pool.query('SELECT city FROM main WHERE "chatId" = $1', [chatId])
+            const data = await pool.query('SELECT city FROM main WHERE "chatId" = $1', [chatId]);
             if (data.rowCount === 0) {
-                return DB_RESULT.NOT_FOUND
+                return DB_RESULT.NOT_FOUND;
             }
-            return data.rows[0].city
+            return data.rows[0].city;
         } catch (error) {
-            console.log(error)
-            return DB_RESULT.UNKNOWN_ERROR
+            console.log(error);
+            return DB_RESULT.UNKNOWN_ERROR;
         }
     },
     async addUser(chatId: number, city: string) {
         try {
-            await pool.query('INSERT INTO main ("chatId", city) VALUES ($1, $2)', [chatId, city])
-            return DB_RESULT.SUCCESSFULLY
+            await pool.query('INSERT INTO main ("chatId", city) VALUES ($1, $2)', [chatId, city]);
+            return DB_RESULT.SUCCESSFULLY;
         } catch (error) {
-            console.log(error)
-            return DB_RESULT.UNKNOWN_ERROR
+            console.log(error);
+            return DB_RESULT.UNKNOWN_ERROR;
         }
-
     },
     async updateCityByChatId(chatId: number, newCity: string) {
         try {
             await pool.query('UPDATE main SET city = $1 WHERE "chatId" = $2', [newCity, chatId])
-            return DB_RESULT.SUCCESSFULLY
+            return DB_RESULT.SUCCESSFULLY;
         } catch (error) {
-            console.log(error)
-            return DB_RESULT.UNKNOWN_ERROR
+            console.log(error);
+            return DB_RESULT.UNKNOWN_ERROR;
         }
     },
     async getAllUsers() {
         try {
-            return await pool.query('SELECT "chatId" FROM main')
+            return await pool.query('SELECT "chatId" FROM main');
         } catch (error) {
-            console.log(error)
-            return DB_RESULT.UNKNOWN_ERROR
-        }
-    },
-    async testFound(chatId: number) {
-        try {
-            const data = await pool.query('SELECT * FROM main WHERE "chatId" = $1', [chatId])
-            if (data.rowCount === 0) {
-                return DB_RESULT.NOT_FOUND
-            }
-            return data
-        } catch (error) {
-            console.log(error)
-            return DB_RESULT.UNKNOWN_ERROR
+            console.log(error);
+            return DB_RESULT.UNKNOWN_ERROR;
         }
     }
 }

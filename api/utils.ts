@@ -1,5 +1,6 @@
+//Handler that selects icon depending on the condition code
 export function handlerConditionCode(code: number) {
-    let conditionText: string = ''
+    let conditionText: string = '';
     switch (code) {
         case 1000:
             conditionText = '☀️';
@@ -60,9 +61,10 @@ export function handlerConditionCode(code: number) {
         default:
             conditionText = '';
     }
-    return conditionText
+    return conditionText;
 }
-export function changeDateRuFormat(date: string) {
-    const dateSplit = date.split('-')
-    return `${dateSplit[2]}.${dateSplit[1]}.${dateSplit[0]}`
+//Converting date to ru format. 2023-12-31 -> 31.12.2023
+export function changeDateRuFormat(date: string): string {
+    const dateSplit: string[] = date.split('-');
+    return `${dateSplit[2]}.${dateSplit[1]}.${dateSplit[0]}`;
 }
