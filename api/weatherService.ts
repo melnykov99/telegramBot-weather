@@ -20,7 +20,7 @@ export const weatherService = {
     //Build message with weather forecast for user
     buildWeatherMessage(response: AxiosResponse, city: string): string {
         let weatherData: any = {};
-        let weatherMessage: string = response.data.forecast.forecastday.length === 1 ? `Погода ` : `Погода на 3 дня в городе <b>${city}</b>🌇`;
+        let weatherMessage: string = response.data.forecast.forecastday.length === 1 ? `Погода ` : response.data.forecast.forecastday.length === 3 ? `Погода на 3 дня в городе <b>${city}</b>🌇` : `Погода на 5 дней в городе <b>${city}</b>🌇`;
         for (let i = 0; i < response.data.forecast.forecastday.length; i++) {
             weatherData.maxTemp = Math.round(response.data.forecast.forecastday[i].day.maxtemp_c);
             weatherData.minTemp = Math.round(response.data.forecast.forecastday[i].day.mintemp_c);
