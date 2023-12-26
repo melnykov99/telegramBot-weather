@@ -19,7 +19,7 @@ export const weatherService = {
     //формируем текст погоды
     buildWeatherMessage(response: AxiosResponse, city: string): string {
         let weatherData: any = {}
-        let weatherMessage: string = response.data.forecast.forecastday.length === 1 ? `Погода ` : `Погода на 3 дня в городе ${city}🌇`
+        let weatherMessage: string = response.data.forecast.forecastday.length === 1 ? `Погода ` : `Погода на 3 дня в городе <b>${city}</b>🌇`
         for (let i = 0; i < response.data.forecast.forecastday.length; i++) {
             weatherData.maxTemp = Math.round(response.data.forecast.forecastday[i].day.maxtemp_c);
             weatherData.minTemp = Math.round(response.data.forecast.forecastday[i].day.mintemp_c);
@@ -32,7 +32,7 @@ export const weatherService = {
             weatherData.stringSnowChance = weatherData.minTemp > 0 ? '' : `\nВероятность снега: <b>${weatherData.snowChance}%</b> ❄️`
 
             if (response.data.forecast.forecastday.length === 1) {
-                weatherMessage += `<b>${weatherData.togetherDateRuFormat}</b> в городе ${city}🌇\nБольшую часть дня будет <b>${weatherData.avgCondition}</b>\nТемпература: от <b>${weatherData.minTemp}℃</b> ⬇️ до <b>${weatherData.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${weatherData.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${weatherData.rainChance}%</b> 🌧${weatherData.stringSnowChance}`
+                weatherMessage += `<b>${weatherData.togetherDateRuFormat}</b> в городе <b>${city}</b>🌇\nБольшую часть дня будет <b>${weatherData.avgCondition}</b>\nТемпература: от <b>${weatherData.minTemp}℃</b> ⬇️ до <b>${weatherData.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${weatherData.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${weatherData.rainChance}%</b> 🌧${weatherData.stringSnowChance}`
             } else {
                 weatherMessage += `\n\n<b>${weatherData.togetherDateRuFormat}</b>\nБольшую часть дня будет <b>${weatherData.avgCondition}</b>\nТемпература: от <b>${weatherData.minTemp}℃</b> ⬇️ до <b>${weatherData.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${weatherData.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${weatherData.rainChance}%</b> 🌧${weatherData.stringSnowChance}`
             }
@@ -92,6 +92,7 @@ export const weatherService = {
             return outputMessages.unknownError
         }
         response.data.forecast.forecastday.push(responseFifthDay.data.forecast.forecastday[0])
+
         return this.buildWeatherMessage(response, city)
     }
 }
