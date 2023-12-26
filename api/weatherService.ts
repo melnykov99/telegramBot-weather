@@ -1,31 +1,49 @@
 import {apiRequestClient} from "./apiRequestClient";
 import {changeDateRuFormat, handlerConditionCode} from "./utils";
-import {API_RESULT, DB_RESULT} from "./constants";
+import {API_RESULT, DB_RESULT, outputMessages} from "./constants";
 import {usersRepository} from "./usersRepository";
+import {AxiosResponse} from "axios";
 
 export const weatherService = {
-    async forecastByDate(chatId: number, date: string) {
+    //обработчик ошибок city
+    handlerCityError(city: string): string | undefined {
+        switch (city) {
+            case DB_RESULT.NOT_FOUND:
+                return outputMessages.cityNotFound;
+            case DB_RESULT.UNKNOWN_ERROR:
+                return outputMessages.unknownError;
+            default:
+                return
+        }
+    },
+    //формируем текст погоды
+    buildWeatherMessage(response: AxiosResponse, date: string, city: string): string {
+        let weatherData: any = {}
+        let weatherMessage: string = `Погода `
+        for(let i = 0; i < response.data.forecast.forecastday.length; i++) {
+            weatherData.maxTemp = Math.round(response.data.forecast.forecastday[i].day.maxtemp_c);
+            weatherData.minTemp = Math.round(response.data.forecast.forecastday[i].day.mintemp_c);
+            weatherData.avgWind = response.data.forecast.forecastday[i].day.avgvis_km;
+            weatherData.rainChance = response.data.forecast.forecastday[i].day.daily_chance_of_rain;
+            weatherData.snowChance = response.data.forecast.forecastday[i].day.daily_chance_of_snow;
+            weatherData.conditionIcon = handlerConditionCode(response.data.forecast.forecastday[i].day.condition.code);
+            weatherData.avgCondition = `${response.data.forecast.forecastday[i].day.condition.text.toLowerCase()} ${weatherData.conditionIcon}`;
+            weatherData.togetherDateRuFormat = changeDateRuFormat(date);
+            weatherData.stringSnowChance = weatherData.minTemp > 0 ? '' : `\nВероятность снега: <b>${weatherData.snowChance}%</b> ❄️`
+        }
+        return weatherMessage += `Погода <b>${weatherData.togetherDateRuFormat}</b> в городе <b>${city}</b> 🌇\nБольшую часть дня будет <b>${weatherData.avgCondition}</b>\nТемпература: от <b>${weatherData.minTemp}℃</b> ⬇️ до <b>${weatherData.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${weatherData.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${weatherData.rainChance}%</b> 🌧${weatherData.stringSnowChance}`
+    },
+    async forecastByDate(chatId: number, date: string): Promise<string> {
         const city = await usersRepository.foundCityByUserChatId(chatId)
-        if (city === DB_RESULT.NOT_FOUND) {
-            return 'Ошибка при запросе погоды! Попробуйте нажать кнопку "Изменить город".'
+        const cityError: string | undefined = this.handlerCityError(city);
+        if (cityError) {
+            return cityError;
         }
-        if (city === DB_RESULT.UNKNOWN_ERROR) {
-            return 'Ошибка при запросе погоды! Попробуйте позже.'
-        }
-        const response = await apiRequestClient.forecastDate(city, date)
+        const response: AxiosResponse | API_RESULT.UNKNOWN_ERROR = await apiRequestClient.forecastDate(city, date)
         if (response === API_RESULT.UNKNOWN_ERROR) {
-            return 'Ошибка при запросе погоды! Попробуйте позже.'
+            return outputMessages.unknownError
         }
-        const maxTemp = Math.round(response.data.forecast.forecastday[0].day.maxtemp_c)
-        const minTemp = Math.round(response.data.forecast.forecastday[0].day.mintemp_c)
-        const avgWind = response.data.forecast.forecastday[0].day.avgvis_km
-        const rainChance = response.data.forecast.forecastday[0].day.daily_chance_of_rain
-        const snowChance = response.data.forecast.forecastday[0].day.daily_chance_of_snow
-        const conditionIcon: string = handlerConditionCode(response.data.forecast.forecastday[0].day.condition.code)
-        const avgCondition = `${response.data.forecast.forecastday[0].day.condition.text.toLowerCase()} ${conditionIcon}`
-        const togetherDateRuFormat = changeDateRuFormat(date)
-        const stringSnowChance = minTemp > 0 ? '' : `\nВероятность снега: <b>${snowChance}%</b> ❄️`
-        return `Погода <b>${togetherDateRuFormat}</b> в городе <b>${city}</b> 🌇\nБольшую часть дня будет <b>${avgCondition}</b>\nТемпература: от <b>${minTemp}℃</b> ⬇️ до <b>${maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${avgWind} м/с</b> 🌬\nВероятность дождя: <b>${rainChance}%</b> 🌧${stringSnowChance}`
+        return this.buildWeatherMessage(response, date, city)
     },
     async forecastThreeDays(chatId: number) {
         const city = await usersRepository.foundCityByUserChatId(chatId)
