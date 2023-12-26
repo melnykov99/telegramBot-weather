@@ -17,10 +17,10 @@ export const weatherService = {
         }
     },
     //формируем текст погоды
-    buildWeatherMessage(response: AxiosResponse, date: string, city: string): string {
+    buildWeatherMessage(response: AxiosResponse, city: string): string {
         let weatherData: any = {}
-        let weatherMessage: string = `Погода `
-        for(let i = 0; i < response.data.forecast.forecastday.length; i++) {
+        let weatherMessage: string = response.data.forecast.forecastday.length === 1 ? `Погода ` : `Погода на 3 дня в городе ${city}🌇`
+        for (let i = 0; i < response.data.forecast.forecastday.length; i++) {
             weatherData.maxTemp = Math.round(response.data.forecast.forecastday[i].day.maxtemp_c);
             weatherData.minTemp = Math.round(response.data.forecast.forecastday[i].day.mintemp_c);
             weatherData.avgWind = response.data.forecast.forecastday[i].day.avgvis_km;
@@ -28,10 +28,16 @@ export const weatherService = {
             weatherData.snowChance = response.data.forecast.forecastday[i].day.daily_chance_of_snow;
             weatherData.conditionIcon = handlerConditionCode(response.data.forecast.forecastday[i].day.condition.code);
             weatherData.avgCondition = `${response.data.forecast.forecastday[i].day.condition.text.toLowerCase()} ${weatherData.conditionIcon}`;
-            weatherData.togetherDateRuFormat = changeDateRuFormat(date);
+            weatherData.togetherDateRuFormat = changeDateRuFormat(response.data.forecast.forecastday[i].date);
             weatherData.stringSnowChance = weatherData.minTemp > 0 ? '' : `\nВероятность снега: <b>${weatherData.snowChance}%</b> ❄️`
+
+            if (response.data.forecast.forecastday.length === 1) {
+                weatherMessage += `<b>${weatherData.togetherDateRuFormat}</b> в городе ${city}🌇\nБольшую часть дня будет <b>${weatherData.avgCondition}</b>\nТемпература: от <b>${weatherData.minTemp}℃</b> ⬇️ до <b>${weatherData.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${weatherData.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${weatherData.rainChance}%</b> 🌧${weatherData.stringSnowChance}`
+            } else {
+                weatherMessage += `\n\n<b>${weatherData.togetherDateRuFormat}</b>\nБольшую часть дня будет <b>${weatherData.avgCondition}</b>\nТемпература: от <b>${weatherData.minTemp}℃</b> ⬇️ до <b>${weatherData.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${weatherData.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${weatherData.rainChance}%</b> 🌧${weatherData.stringSnowChance}`
+            }
         }
-        return weatherMessage += `<b>${weatherData.togetherDateRuFormat}</b> в городе <b>${city}</b> 🌇\nБольшую часть дня будет <b>${weatherData.avgCondition}</b>\nТемпература: от <b>${weatherData.minTemp}℃</b> ⬇️ до <b>${weatherData.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${weatherData.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${weatherData.rainChance}%</b> 🌧${weatherData.stringSnowChance}`
+        return weatherMessage
     },
     async forecastByDate(chatId: number, date: string): Promise<string> {
         const city = await usersRepository.foundCityByUserChatId(chatId)
@@ -43,57 +49,19 @@ export const weatherService = {
         if (response === API_RESULT.UNKNOWN_ERROR) {
             return outputMessages.unknownError
         }
-        return this.buildWeatherMessage(response, date, city)
+        return this.buildWeatherMessage(response, city)
     },
     async forecastThreeDays(chatId: number) {
         const city = await usersRepository.foundCityByUserChatId(chatId)
-        if (city === DB_RESULT.NOT_FOUND) {
-            return 'Ошибка при запросе погоды! Попробуйте нажать кнопку "Изменить город".'
-        }
-        if (city === DB_RESULT.UNKNOWN_ERROR) {
-            return 'Ошибка при запросе погоды! Попробуйте позже.'
+        const cityError: string | undefined = this.handlerCityError(city);
+        if (cityError) {
+            return cityError;
         }
         const response = await apiRequestClient.forecastDays(city, 3)
         if (response === API_RESULT.UNKNOWN_ERROR) {
-            return 'Ошибка при запросе погоды! Попробуйте позже.'
+            return outputMessages.unknownError
         }
-        const firstDayProp = {
-            maxTemp: Math.round(response.data.forecast.forecastday[0].day.maxtemp_c),
-            minTemp: Math.round(response.data.forecast.forecastday[0].day.mintemp_c),
-            avgWind: response.data.forecast.forecastday[0].day.avgvis_km,
-            rainChance: response.data.forecast.forecastday[0].day.daily_chance_of_rain,
-            snowChance: response.data.forecast.forecastday[0].day.daily_chance_of_snow,
-            conditionIcon: handlerConditionCode(response.data.forecast.forecastday[0].day.condition.code),
-            avgCondition: () => `${response.data.forecast.forecastday[0].day.condition.text.toLowerCase()} ${firstDayProp.conditionIcon}`,
-            dateRuFormat: changeDateRuFormat(response.data.forecast.forecastday[0].date),
-            stringSnowChance: () => firstDayProp.minTemp > 0 ? '' : `\nВероятность снега: <b>${firstDayProp.snowChance}%</b> ❄️`
-        }
-        const firstDayAnswer = `<b>${firstDayProp.dateRuFormat}</b>\nБольшую часть дня будет <b>${firstDayProp.avgCondition()}</b>\nТемпература: от <b>${firstDayProp.minTemp}℃</b> ⬇️ до <b>${firstDayProp.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${firstDayProp.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${firstDayProp.rainChance}%</b> 🌧${firstDayProp.stringSnowChance()}`
-        const secondDayProp = {
-            maxTemp: Math.round(response.data.forecast.forecastday[1].day.maxtemp_c),
-            minTemp: Math.round(response.data.forecast.forecastday[1].day.mintemp_c),
-            avgWind: response.data.forecast.forecastday[1].day.avgvis_km,
-            rainChance: response.data.forecast.forecastday[1].day.daily_chance_of_rain,
-            snowChance: response.data.forecast.forecastday[1].day.daily_chance_of_snow,
-            conditionIcon: handlerConditionCode(response.data.forecast.forecastday[1].day.condition.code),
-            avgCondition: () => `${response.data.forecast.forecastday[1].day.condition.text.toLowerCase()} ${secondDayProp.conditionIcon}`,
-            dateRuFormat: changeDateRuFormat(response.data.forecast.forecastday[1].date),
-            stringSnowChance: () => secondDayProp.minTemp > 0 ? '' : `\nВероятность снега: <b>${secondDayProp.snowChance}%</b> ❄️`
-        }
-        const secondDayAnswer = `<b>${secondDayProp.dateRuFormat}</b>\nБольшую часть дня будет <b>${secondDayProp.avgCondition()}</b>\nТемпература: от <b>${secondDayProp.minTemp}℃</b> ⬇️ до <b>${secondDayProp.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${secondDayProp.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${secondDayProp.rainChance}%</b> 🌧${secondDayProp.stringSnowChance()}`
-        const thirdDayProp = {
-            maxTemp: Math.round(response.data.forecast.forecastday[2].day.maxtemp_c),
-            minTemp: Math.round(response.data.forecast.forecastday[2].day.mintemp_c),
-            avgWind: response.data.forecast.forecastday[2].day.avgvis_km,
-            rainChance: response.data.forecast.forecastday[2].day.daily_chance_of_rain,
-            snowChance: response.data.forecast.forecastday[2].day.daily_chance_of_snow,
-            conditionIcon: handlerConditionCode(response.data.forecast.forecastday[2].day.condition.code),
-            avgCondition: () => `${response.data.forecast.forecastday[2].day.condition.text.toLowerCase()} ${thirdDayProp.conditionIcon}`,
-            dateRuFormat: changeDateRuFormat(response.data.forecast.forecastday[2].date),
-            stringSnowChance: () => thirdDayProp.minTemp > 0 ? '' : `\nВероятность снега: <b>${thirdDayProp.snowChance}%</b> ❄️`
-        }
-        const thirdDayAnswer = `<b>${thirdDayProp.dateRuFormat}</b>\nБольшую часть дня будет <b>${thirdDayProp.avgCondition()}</b>\nТемпература: от <b>${thirdDayProp.minTemp}℃</b> ⬇️ до <b>${thirdDayProp.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${thirdDayProp.avgWind} м/с</b> 🌬\nВероятность дождя: <b>${thirdDayProp.rainChance}%</b> 🌧${thirdDayProp.stringSnowChance()}`
-        return `Погода на 3 дня в городе <b>${city}🌇</b>\n\n${firstDayAnswer}\n\n${secondDayAnswer}\n\n${thirdDayAnswer}`
+        return this.buildWeatherMessage(response, city)
     },
     async forecastFiveDays(chatId: number) {
         const city = await usersRepository.foundCityByUserChatId(chatId)
