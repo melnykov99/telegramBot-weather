@@ -1,13 +1,13 @@
 {
   "functions": {
-    "api/bot.ts": {
+    "app/bot.ts": {
       "memory": 1024,
       "maxDuration": 10
     }
   },
   "crons": [
     {
-      "path": "/api/cron",
+      "path": "/app/cron",
       "schedule": "00 4 * * *"
     }
   ]

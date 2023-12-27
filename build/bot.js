@@ -43,7 +43,7 @@ const mainKeyboard = new grammy_1.Keyboard()
         console.log(usersData[i])
         const answer: string = await weatherService.forecastByDate(chatId, togetherDate)
         console.log(answer)
-        await bot.api.sendMessage(usersData[i].chatId, answer, {parse_mode: "HTML", reply_markup: mainKeyboard})
+        await bot.app.sendMessage(usersData[i].chatId, answer, {parse_mode: "HTML", reply_markup: mainKeyboard})
         console.log('крона в конце цикла после отправки сообщения')
     }
 }, {timezone: 'Europe/Moscow'})

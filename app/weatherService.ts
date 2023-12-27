@@ -67,7 +67,7 @@ export const weatherService = {
     },
     /*
     Weather forecast for 5 days. First 3 days request one method, the other two days we request by date
-    Made due to weather api limitations on the free plan
+    Made due to weather app limitations on the free plan
      */
     async forecastFiveDays(chatId: number): Promise<string> {
         const city = await usersRepository.foundCityByUserChatId(chatId);
