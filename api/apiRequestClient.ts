@@ -8,7 +8,7 @@ dotenv.config();
 const weatherApiKey: string | undefined = process.env.WEATHER_API_KEY;
 const weatherHost: string = "https://api.weatherapi.com/v1";
 
-//Methods for requesting weather via app.weatherapi.com
+//Methods for requesting weather via api.weatherapi.com
 export const apiRequestClient = {
     //Request forecast by date in format yyyy-mm-dd
     async forecastDate(city: string, date: string) {
