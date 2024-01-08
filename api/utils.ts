@@ -1,11 +1,11 @@
 //Handler Precipitation type
 export function handlerPrecipType(preciptype: string[]) {
-    if(preciptype.includes('snow')){
-        return 'Снег ❄️'
-    } else if(preciptype.includes('rain') || preciptype.includes('freezing rain') || preciptype.includes('ice')){
-        return 'Дождь 🌧'
-    } else {
+    if (preciptype === null) {
         return 'Нет осадков ☀️'
+    } else if (preciptype.includes('snow')) {
+        return 'Снег ❄️'
+    } else if (preciptype.includes('rain') || preciptype.includes('freezing rain') || preciptype.includes('ice')) {
+        return 'Дождь 🌧'
     }
 }
 
@@ -74,6 +74,7 @@ export function handlerConditionCode(code: number) {
     }
     return conditionText;
 }
+
 //Converting date to ru format. 2023-12-31 -> 31.12.2023
 export function changeDateRuFormat(date: string): string {
     const dateSplit: string[] = date.split('-');
