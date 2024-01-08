@@ -29,7 +29,7 @@ export const weatherService = {
             weatherData.preciptype = response.data.days[i].preciptype;
             weatherData.avgCondition = `${response.data.days[i].conditions}`;
             weatherData.todayDateRuFormat = changeDateRuFormat(response.data.days[i].datetime);
-            if (response.data.forecast.forecastday.length === 1) {
+            if (response.data.days.length === 1) {
                 weatherMessage += `<b>${weatherData.todayDateRuFormat}</b> в городе <b>${city}</b>🌇\nБольшую часть дня будет <b>${weatherData.avgCondition}</b>\nТемпература: от <b>${weatherData.minTemp}℃</b> ⬇️ до <b>${weatherData.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${weatherData.avgWind} м/с</b> 🌬\nВероятность осадков: <b>${weatherData.precipprob}%</b>`;
             } else {
                 weatherMessage += `\n\n<b>${weatherData.todayDateRuFormat}</b>\nБольшую часть дня будет <b>${weatherData.avgCondition}</b>\nТемпература: от <b>${weatherData.minTemp}℃</b> ⬇️ до <b>${weatherData.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${weatherData.avgWind} м/с</b> 🌬\nВероятность осадков: <b>${weatherData.precipprob}%</b>`;

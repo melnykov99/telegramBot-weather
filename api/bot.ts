@@ -129,6 +129,5 @@ bot.on("message", async (ctx) => {
     await ctx.reply(outputMessages.acceptCity, {reply_markup: mainKeyboard});
     return;
 });
-
 //Subscribe to webhooks to work with Vercel
 export default webhookCallback(bot, "http");
