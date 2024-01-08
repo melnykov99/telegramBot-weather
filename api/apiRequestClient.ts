@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 
-const weatherApiKey: string | undefined = process.env.WEATHER_API_KEY;
+const weatherApiKey: string | undefined = '75GZ4BL8ZJ5K6T5RV7BD55FLB';
 const weatherHost: string = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline';
 
 //Methods for requesting weather via weather.visualcrossing.com
