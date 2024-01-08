@@ -1,3 +1,14 @@
+//Handler Precipitation type
+export function handlerPrecipType(preciptype: string[]) {
+    if(preciptype.includes('snow')){
+        return 'Снег ❄️'
+    } else if(preciptype.includes('rain') || preciptype.includes('freezing rain') || preciptype.includes('ice')){
+        return 'Дождь 🌧'
+    } else {
+        return 'Нет осадков ☀️'
+    }
+}
+
 //Handler that selects icon depending on the condition code
 export function handlerConditionCode(code: number) {
     let conditionText: string = '';

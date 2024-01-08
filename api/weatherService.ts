@@ -1,5 +1,5 @@
 import {apiRequestClient} from "./apiRequestClient";
-import {changeDateRuFormat, handlerConditionCode} from "./utils";
+import {changeDateRuFormat, handlerPrecipType} from "./utils";
 import {API_RESULT, DB_RESULT, outputMessages} from "./constants";
 import {usersRepository} from "./usersRepository";
 import {AxiosResponse} from "axios";
@@ -26,13 +26,14 @@ export const weatherService = {
             weatherData.minTemp = Math.round(response.data.days[i].tempmin);
             weatherData.avgWind = response.data.days[i].windspeed;
             weatherData.precipprob = response.data.days[i].precipprob;
-            weatherData.preciptype = response.data.days[i].preciptype;
+            weatherData.preciptype = handlerPrecipType(response.data.days[i].preciptype);
+            weatherData.precipString = weatherData.preciptype === 'Нет осадков ☀️' ? `Нет осадков ☀️` : `${weatherData.preciptype} с вероятностью ${Math.round(weatherData.precipprob)}%`
             weatherData.avgCondition = `${response.data.days[i].conditions}`;
             weatherData.todayDateRuFormat = changeDateRuFormat(response.data.days[i].datetime);
             if (response.data.days.length === 1) {
-                weatherMessage += `<b>${weatherData.todayDateRuFormat}</b> в городе <b>${city}</b>🌇\nБольшую часть дня будет <b>${weatherData.avgCondition}</b>\nТемпература: от <b>${weatherData.minTemp}℃</b> ⬇️ до <b>${weatherData.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${weatherData.avgWind} м/с</b> 🌬\nВероятность осадков: <b>${weatherData.precipprob}%</b>`;
+                weatherMessage += `<b>${weatherData.todayDateRuFormat}</b> в городе <b>${city}</b>🌇\nБольшую часть дня будет <b>${weatherData.avgCondition}</b>\nТемпература: от <b>${weatherData.minTemp}℃</b> ⬇️ до <b>${weatherData.maxTemp}℃</b> ⬆️\nОсадки: ${weatherData.precipString}\nСкорость ветра: <b>${weatherData.avgWind} м/с</b> 🌬`;
             } else {
-                weatherMessage += `\n\n<b>${weatherData.todayDateRuFormat}</b>\nБольшую часть дня будет <b>${weatherData.avgCondition}</b>\nТемпература: от <b>${weatherData.minTemp}℃</b> ⬇️ до <b>${weatherData.maxTemp}℃</b> ⬆️\nСкорость ветра: <b>${weatherData.avgWind} м/с</b> 🌬\nВероятность осадков: <b>${weatherData.precipprob}%</b>`;
+                weatherMessage += `\n\n<b>${weatherData.todayDateRuFormat}</b>\nБольшую часть дня будет <b>${weatherData.avgCondition}</b>\nТемпература: от <b>${weatherData.minTemp}℃</b> ⬇️ до <b>${weatherData.maxTemp}℃</b> ⬆️\nОсадки: ${weatherData.precipString}\nСкорость ветра: <b>${weatherData.avgWind} м/с</b> 🌬`;
             }
         }
         return weatherMessage;
