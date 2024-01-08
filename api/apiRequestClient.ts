@@ -6,22 +6,14 @@ dotenv.config();
 
 
 const weatherApiKey: string | undefined = process.env.WEATHER_API_KEY;
-const weatherHost: string = "https://api.weatherapi.com/v1";
+const weatherHost: string = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline";
 
-//Methods for requesting weather via api.weatherapi.com
+//Methods for requesting weather via weather.visualcrossing.com
 export const apiRequestClient = {
-    //Request forecast by date in format yyyy-mm-dd
-    async forecastDate(city: string, date: string) {
+    //Request weather. In period may be "today", "tomorrow", "next 2 days", "next 4 days"
+    async forecastRequest(city: string, period: string) {
         try {
-            return await axios.get(`${weatherHost}/forecast.json?key=${weatherApiKey}&q=${city}&lang=ru&date=${date}`);
-        } catch (error) {
-            return API_RESULT.UNKNOWN_ERROR;
-        }
-    },
-    //Request weather for several days. Free API plan is limited, maximum 3 days
-    async forecastDays(city: string, days: number) {
-        try {
-            return await axios.get(`${weatherHost}/forecast.json?key=${weatherApiKey}&q=${city}&lang=ru&days=${days}`);
+            return await axios.get(`${weatherHost}/${city}/${period}?key=${weatherApiKey}&lang=ru&unitGroup=uk&include=days`);
         } catch (error) {
             return API_RESULT.UNKNOWN_ERROR;
         }
@@ -29,8 +21,8 @@ export const apiRequestClient = {
     //Test request which use for validation city. If city exists return city name, else return error
     async checkCity(city: string) {
         try {
-            const response = await axios.get(`${weatherHost}/current.json?key=${weatherApiKey}&q=${city}&lang=ru`);
-            return response.data.location.name;
+            const response = await axios.get(`${weatherHost}/${city}/today}?key=${weatherApiKey}&lang=ru&unitGroup=uk&include=days`);
+            return response.data.resolvedAddress;
         } catch (error) {
             return API_RESULT.UNKNOWN_ERROR;
         }

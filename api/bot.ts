@@ -29,7 +29,7 @@ export const mainKeyboard = new Keyboard()
 
 
 /*
-Conversation logic on click "Change city 🌇. Here"
+Conversation logic on click "Изменить город🌇"
 We send a message asking to write the name of the city.
 If the message is incorrect or the city is not valid, then terminate the function and report an error.
 Otherwise, we update the user's city in the database.
@@ -72,23 +72,19 @@ bot.command("start", async (ctx) => {
 });
 //Below are reactions to click buttons from the keyboard
 bot.hears("Погода сегодня 🌞", async (ctx) => {
-    const togetherDate: string = new Date().toISOString().split("T")[0];
-    const answer: string = await weatherService.forecastByDate(ctx.chat.id, togetherDate);
+    const answer: string = await weatherService.forecastRequest(ctx.chat.id, 'today');
     await ctx.reply(answer, {parse_mode: "HTML", reply_markup: mainKeyboard});
 });
 bot.hears("Погода завтра 🌅", async (ctx) => {
-    const currentDate = new Date();
-    const tomorrowDate = currentDate.setDate(currentDate.getDate() + 1);
-    const tomorrowDateISO = currentDate.toISOString();
-    const answer: string = await weatherService.forecastByDate(ctx.chat.id, tomorrowDateISO.split("T")[0]);
+    const answer: string = await weatherService.forecastRequest(ctx.chat.id, 'tomorrow');
     await ctx.reply(answer, {parse_mode: "HTML", reply_markup: mainKeyboard});
 });
 bot.hears("Прогноз на 3 дня 📊", async (ctx) => {
-    const answer = await weatherService.forecastThreeDays(ctx.chat.id);
+    const answer = await weatherService.forecastRequest(ctx.chat.id, 'next2days');
     await ctx.reply(answer, {parse_mode: "HTML", reply_markup: mainKeyboard});
 });
 bot.hears("Прогноз на 5 дней 🔮", async (ctx) => {
-    const answer = await weatherService.forecastFiveDays(ctx.chat.id);
+    const answer = await weatherService.forecastRequest(ctx.chat.id, 'next4days');
     await ctx.reply(answer, {parse_mode: "HTML", reply_markup: mainKeyboard});
 });
 //Starts the conversation changeCity, which was created earlier

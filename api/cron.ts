@@ -18,10 +18,9 @@ async function forecastEverydayCron() {
         return console.log("cron error. data.rowCount null");
     }
     const usersData = data.rows;
-    const togetherDate = new Date().toISOString().split("T")[0];
     for (let i = 0; i < usersCount; i++) {
         const chatId = usersData[i].chatId;
-        const answer: string = await weatherService.forecastByDate(chatId, togetherDate);
+        const answer: string = await weatherService.forecastRequest(chatId, 'today');
         try {
             await bot.api.sendMessage(usersData[i].chatId, answer, {parse_mode: "HTML", reply_markup: mainKeyboard});
         } catch (error) {
