@@ -3,9 +3,9 @@ export function handlerPrecipType(preciptype: string[] | null) {
     if (preciptype === null) {
         return 'Без осадков'
     } else if (preciptype.includes('snow')) {
-        return 'снег ❄️'
+        return 'снег'
     } else if (preciptype.includes('rain') || preciptype.includes('freezing rain') || preciptype.includes('ice')) {
-        return 'дождь 🌧'
+        return 'дождь'
     }
 }
 

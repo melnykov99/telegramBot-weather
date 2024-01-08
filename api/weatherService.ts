@@ -27,7 +27,7 @@ export const weatherService = {
             weatherData.avgWind = response.data.days[i].windspeed;
             weatherData.precipprob = response.data.days[i].precipprob;
             weatherData.preciptype = handlerPrecipType(response.data.days[i].preciptype);
-            weatherData.precipString = weatherData.preciptype === 'Без осадков' ? `Без осадков` : `С вероятностью <b>${Math.round(weatherData.precipprob)}%</b> будет ${weatherData.preciptype} `
+            weatherData.precipString = weatherData.preciptype === 'Без осадков' ? `Без осадков` : `С вероятностью <b>${Math.round(weatherData.precipprob)}% будет ${weatherData.preciptype}</b>`
             weatherData.conditionIcon = handlerConditionIcon(response.data.days[i].icon)
             weatherData.avgCondition = `${response.data.days[i].conditions}`;
             weatherData.todayDateRuFormat = changeDateRuFormat(response.data.days[i].datetime);
