@@ -15,7 +15,7 @@ type WeatherConversation = Conversation<WeatherContext>;
 dotenv.config();
 
 //Creating a bot. Use a special Telegram token. The bot is created with the previously declared context.
-const tgBotToken: string | undefined = '6574326601:AAFLDIzySPEFS8RX_H5jjQ_0AywMhYiqeU8';
+const tgBotToken: string | undefined = process.env.TELEGRAM_BOT_TOKEN;
 export const bot = new Bot<WeatherContext>(tgBotToken!);
 //For the correct operation of conversation it is necessary to initialize the session.
 bot.use(session({initial: () => ({})}));
