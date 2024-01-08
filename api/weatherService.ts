@@ -1,5 +1,5 @@
 import {apiRequestClient} from "./apiRequestClient";
-import {changeDateRuFormat, handlerPrecipType} from "./utils";
+import {changeDateRuFormat, handlerConditionIcon, handlerPrecipType} from "./utils";
 import {API_RESULT, DB_RESULT, outputMessages} from "./constants";
 import {usersRepository} from "./usersRepository";
 import {AxiosResponse} from "axios";
@@ -28,6 +28,7 @@ export const weatherService = {
             weatherData.precipprob = response.data.days[i].precipprob;
             weatherData.preciptype = handlerPrecipType(response.data.days[i].preciptype);
             weatherData.precipString = weatherData.preciptype === 'Без осадков' ? `Без осадков` : `С вероятностью <b>${Math.round(weatherData.precipprob)}%</b> будет ${weatherData.preciptype} `
+            weatherData.conditionIcon = handlerConditionIcon(response.data.days[i].icon)
             weatherData.avgCondition = `${response.data.days[i].conditions}`;
             weatherData.todayDateRuFormat = changeDateRuFormat(response.data.days[i].datetime);
             if (response.data.days.length === 1) {
