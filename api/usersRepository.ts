@@ -38,7 +38,7 @@ export const usersRepository = {
     },
     async updateCityByChatId(chatId: number, newCity: string, newFullCity: string) {
         try {
-            await pool.query('UPDATE main SET city = $2 fullCity = $3 WHERE "chatId" = $1', [chatId, newCity, newFullCity])
+            await pool.query('UPDATE main SET city = $2, fullCity = $3 WHERE "chatId" = $1', [chatId, newCity, newFullCity])
             return DB_RESULT.SUCCESSFULLY;
         } catch (error) {
             console.log(error);
