@@ -1,11 +1,11 @@
 //Handler Precipitation type
-export function handlerPrecipType(preciptype: string[]) {
+export function handlerPrecipType(preciptype: string[] | null) {
     if (preciptype === null) {
         return 'Нет осадков ☀️'
     } else if (preciptype.includes('snow')) {
-        return 'Снег ❄️'
+        return 'снег ❄️'
     } else if (preciptype.includes('rain') || preciptype.includes('freezing rain') || preciptype.includes('ice')) {
-        return 'Дождь 🌧'
+        return 'дождь 🌧'
     }
 }
 
