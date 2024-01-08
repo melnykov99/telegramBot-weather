@@ -54,7 +54,7 @@ async function changeCity(conversation: WeatherConversation, ctx: WeatherContext
         return;
     }
     const chatId: number = newCityContext.chat!.id;
-    const updateResult: DB_RESULT.UNKNOWN_ERROR | DB_RESULT.SUCCESSFULLY = await usersRepository.updateCityByChatId(chatId!, checkedCity);
+    const updateResult: DB_RESULT.UNKNOWN_ERROR | DB_RESULT.SUCCESSFULLY = await usersRepository.updateCityByChatId(chatId!, city, checkedCity);
     if (updateResult === DB_RESULT.UNKNOWN_ERROR) {
         await ctx.reply(outputMessages.changeCityUnknownError);
         return;
@@ -124,7 +124,7 @@ bot.on("message", async (ctx) => {
         return;
     }
     //Adding user and him city in DB
-    await usersRepository.addUser(chatId, checkedCity);
+    await usersRepository.addUser(chatId, city, checkedCity);
     //Inform users that your city accepted. Inform about daily forecasts. Inform about possibilities bot.
     await ctx.reply(outputMessages.acceptCity, {reply_markup: mainKeyboard});
     return;

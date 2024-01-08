@@ -27,18 +27,18 @@ export const usersRepository = {
             return DB_RESULT.UNKNOWN_ERROR;
         }
     },
-    async addUser(chatId: number, city: string) {
+    async addUser(chatId: number, city: string, fullCity: string) {
         try {
-            await pool.query('INSERT INTO main ("chatId", city) VALUES ($1, $2)', [chatId, city]);
+            await pool.query('INSERT INTO main ("chatId", city, "fullCity") VALUES ($1, $2, $3)', [chatId, city, fullCity]);
             return DB_RESULT.SUCCESSFULLY;
         } catch (error) {
             console.log(error);
             return DB_RESULT.UNKNOWN_ERROR;
         }
     },
-    async updateCityByChatId(chatId: number, newCity: string) {
+    async updateCityByChatId(chatId: number, newCity: string, newFullCity: string) {
         try {
-            await pool.query('UPDATE main SET city = $1 WHERE "chatId" = $2', [newCity, chatId])
+            await pool.query('UPDATE main SET city = $1 fullCity = $2 WHERE "chatId" = $3', [chatId, newCity, newFullCity])
             return DB_RESULT.SUCCESSFULLY;
         } catch (error) {
             console.log(error);
