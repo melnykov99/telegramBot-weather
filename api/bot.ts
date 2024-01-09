@@ -126,7 +126,7 @@ bot.on("message", async (ctx) => {
     //Adding user and him city in DB
     await usersRepository.addUser(chatId, city, checkedCity);
     //Inform users that your city accepted. Inform about daily forecasts. Inform about possibilities bot.
-    await ctx.reply(outputMessages.acceptCity(checkedCity), {reply_markup: mainKeyboard});
+    await ctx.reply(outputMessages.acceptCity(checkedCity), {parse_mode: "HTML", reply_markup: mainKeyboard});
     return;
 });
 //Subscribe to webhooks to work with Vercel
