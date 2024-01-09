@@ -26,6 +26,7 @@ async function forecastEverydayCron() {
             await usersRepository.updateNotifications(true, chatId)
         } catch (error) {
             await usersRepository.updateNotifications(false, chatId)
+            await usersRepository.addError(error, chatId)
             console.log(error);
         }
     }
