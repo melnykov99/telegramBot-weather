@@ -23,7 +23,9 @@ async function forecastEverydayCron() {
         const answer: string = await weatherService.forecastRequest(chatId, 'today');
         try {
             await bot.api.sendMessage(usersData[i].chatId, answer, {parse_mode: "HTML", reply_markup: mainKeyboard});
+            await usersRepository.updateNotifications(true, chatId)
         } catch (error) {
+            await usersRepository.updateNotifications(false, chatId)
             console.log(error);
         }
     }

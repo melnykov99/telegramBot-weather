@@ -52,5 +52,14 @@ export const usersRepository = {
             console.log(error);
             return DB_RESULT.UNKNOWN_ERROR;
         }
+    },
+    async updateNotifications(type: boolean, chatId: number) {
+        try {
+            await pool.query('UPDATE main SET "sendNotification" = $1 WHERE "chatId" = $2', [type, chatId])
+            return DB_RESULT.SUCCESSFULLY;
+        } catch (error) {
+            console.log(error);
+            return DB_RESULT.UNKNOWN_ERROR;
+        }
     }
 }
