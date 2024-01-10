@@ -51,5 +51,14 @@ export const weatherService = {
             return outputMessages.unknownError;
         }
         return this.buildWeatherMessage(response, city);
+    },
+    //May be situation when user block bot. Then he is got in DB "false" in "sendNotification". User can restart and need check, is he in DB
+    async checkAfterBlock(chatId: number) {
+        const foundUser = await usersRepository.foundUserByChatId(chatId)
+        if (foundUser === DB_RESULT.UNKNOWN_ERROR || foundUser === DB_RESULT.NOT_FOUND || foundUser.rows[0].sendNotification !== false) {
+            return
+        }
+        await usersRepository.updateNotifications(true, chatId)
+        return
     }
 }

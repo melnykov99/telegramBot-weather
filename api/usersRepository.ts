@@ -47,7 +47,7 @@ export const usersRepository = {
     },
     async getAllUsers() {
         try {
-            return await pool.query('SELECT "chatId" FROM main');
+            return await pool.query('SELECT * FROM main');
         } catch (error) {
             console.log(error);
             return DB_RESULT.UNKNOWN_ERROR;
@@ -62,10 +62,22 @@ export const usersRepository = {
             return DB_RESULT.UNKNOWN_ERROR;
         }
     },
-    async addError(error: any, chatId: number){
+    async addError(error: any, chatId: number) {
         try {
             await pool.query('UPDATE main SET "lastError" = $1 WHERE "chatId" = $2', [error, chatId])
             return DB_RESULT.SUCCESSFULLY;
+        } catch (error) {
+            console.log(error);
+            return DB_RESULT.UNKNOWN_ERROR;
+        }
+    },
+    async foundUserByChatId(chatId: number) {
+        try {
+            const foundUser = await pool.query('SELECT * FROM main WHERE "chatId" = $1', [chatId])
+            if (foundUser.rowCount === 0) {
+                return DB_RESULT.NOT_FOUND
+            }
+            return foundUser
         } catch (error) {
             console.log(error);
             return DB_RESULT.UNKNOWN_ERROR;

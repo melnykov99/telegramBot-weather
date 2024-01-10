@@ -68,6 +68,7 @@ bot.use(createConversation(changeCity));
 
 //Reaction to /start command. Ask the user to write city. Let him know that we will be sending him the weather every day.
 bot.command("start", async (ctx) => {
+    await weatherService.checkAfterBlock(ctx.chat.id)
     await ctx.reply(outputMessages.commandStart, {parse_mode: "HTML"});
 });
 //Below are reactions to click buttons from the keyboard
