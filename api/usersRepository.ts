@@ -62,9 +62,9 @@ export const usersRepository = {
             return DB_RESULT.UNKNOWN_ERROR;
         }
     },
-    async addError(error: any, chatId: number) {
+    async addStatus(error: any, chatId: number) {
         try {
-            await pool.query('UPDATE main SET "lastError" = $1 WHERE "chatId" = $2', [error, chatId])
+            await pool.query('UPDATE main SET "lastStatus" = $1 WHERE "chatId" = $2', [error, chatId])
             return DB_RESULT.SUCCESSFULLY;
         } catch (error) {
             console.log(error);

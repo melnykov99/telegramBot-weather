@@ -13,20 +13,28 @@ async function forecastEverydayCron() {
     if (data === DB_RESULT.UNKNOWN_ERROR) {
         return console.log("cron error. db error");
     }
-    const usersCount: number | null = data.rowCount;
+    const usersCount: number | null = data.rows.length;
     if (!usersCount) {
         return console.log("cron error. data.rowCount null");
     }
     const usersData = data.rows;
     for (let i = 0; i < usersCount; i++) {
+        if (usersData[i].sendNotification === false) {
+            return
+        }
         const chatId = usersData[i].chatId;
         const answer: string = await weatherService.forecastRequest(chatId, 'today');
         try {
             await bot.api.sendMessage(usersData[i].chatId, answer, {parse_mode: "HTML", reply_markup: mainKeyboard});
-            await usersRepository.updateNotifications(true, chatId)
-        } catch (error) {
-            await usersRepository.updateNotifications(false, chatId)
-            await usersRepository.addError(error, chatId)
+            if (usersData[i].sendNotification !== true) {
+                await usersRepository.updateNotifications(true, chatId)
+            }
+            await usersRepository.addStatus(`${new Date()}, successfully sending`, chatId)
+        } catch (error: any) {
+            if (error.error_code === 403) {
+                await usersRepository.updateNotifications(false, chatId)
+            }
+            await usersRepository.addStatus(error, chatId)
             console.log(error);
         }
     }
