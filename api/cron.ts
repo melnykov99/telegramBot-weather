@@ -20,7 +20,7 @@ async function forecastEverydayCron() {
     const usersData = data.rows;
     for (let i = 0; i < usersCount; i++) {
         if (usersData[i].sendNotification === false) {
-            return
+            continue
         }
         const chatId = usersData[i].chatId;
         const answer: string = await weatherService.forecastRequest(chatId, 'today');
